@@ -3,7 +3,7 @@ import Link from 'next/link'
 const Footer = () => {
   return (
     <footer className="w-full">
-        <div className="lg:flex justify-between items-start py-20 mt-5 lg:px-20 space-y-16 lg:space-y-0">
+        <div className="lg:flex justify-between items-start py-20 lg:py-52 mt-5 lg:px-20 space-y-16 lg:space-y-0">
             <div className="space-y-4">
                 <Link href={"/"} className="block text-center">Home</Link>
                 <Link href={"/"} className="block text-center">Contact</Link>
@@ -21,7 +21,7 @@ const Footer = () => {
         </div>
         <div className="space-y-2 mb-5">
             <h4 className="text-xs text-center">Developed by team <a href="https://codemonga.netlify.app" className="text-sky-500 text-sm font-bold">@codemonga</a></h4>
-            <p className="text-center text-[10px] text-slate-400">&copy;pollup 2025</p>
+            <p className="text-center text-[10px] text-slate-400">&copy;Reapoll 2025</p>
         </div>
     </footer>
   )
