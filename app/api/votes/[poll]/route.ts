@@ -1,11 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest, { params }: { params: { poll: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ poll: string }> }) {
     const { searchParams } = new URL(request.url);
     // console.log(await request.json());
     const supabase = await createClient();
-    const pollId = await params.poll;
+    const { poll } = await params;
     // const ip = getIpAddress(request);
     const IP = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
 
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest, { params }: { params: { poll: s
     const { data: vote, error } = await supabase
         .from('votes')
         .insert([
-            { poll: pollId, option: searchParams.get("choice"), voter: user?.id, IP },
+            { poll, option: searchParams.get("choice"), voter: user?.id, IP },
         ])
         .select("*")
 

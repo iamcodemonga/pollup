@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     // const { searchParams } = new URL(request.url);
     // console.log(await request.json());
     const supabase = await createClient();
-    const pollId = params?.id;
+    const { id } = await params;
     // const ip = getIpAddress(request);
     // const IP = request.headers.get('x-forwarded-for')?.split(',')[0] || request.ip
     const IP = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
                 id
             )
         `)
-        .eq('id', pollId)
+        .eq('id', id)
         .single();
 
     if (error) {
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     let votequery = supabase
         .from('votes')
         .select('option')
-        .eq('poll', pollId);
+        .eq('poll', id);
 
     if (user?.id) {
         // If user is authenticated, filter by both voter and IP

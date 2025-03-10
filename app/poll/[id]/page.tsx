@@ -3,9 +3,9 @@ import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 
 type Pageprops  = {
-    params: {
+    params: Promise<{
         id: string;
-    }
+    }>
 }
 
 export const dynamic = "force-dynamic";
