@@ -22,7 +22,7 @@ const SinglePollFetcher = ({ id }: Props) => {
     })
 
     if (isLoading) return <div>Loading...</div>
-    if (isError) return <div>An error occured</div>
+    if (isError) return <div>An error occurred</div>
 
     return (
         <SingleChoice data={data} />

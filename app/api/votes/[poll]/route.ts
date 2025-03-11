@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+// import requestIp from "request-ip"
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ poll: string }> }) {
     const { searchParams } = new URL(request.url);
@@ -7,7 +8,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const supabase = await createClient();
     const { poll } = await params;
     // const ip = getIpAddress(request);
-    const IP = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+    const IP = request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+    
+    // const IP = requestIp.getClientIp(request)
 
     // Get authenticated user
     // const { data: { user } } = await supabase.auth.getUser();

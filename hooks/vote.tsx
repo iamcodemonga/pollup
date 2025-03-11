@@ -1,3 +1,5 @@
+"use client"
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -31,7 +33,7 @@ type TTOption = {
 }
 
 export const vote = async ({ pollId, optionId }: { pollId: string; optionId: string }) => {
-    const { data: result } = await axios.post(`http://localhost:3000/api/votes/${pollId}?choice=${optionId}`);
+    const { data: result } = await axios.post(`${process.env.NEXT_PUBLIC_ROOTURL}/api/votes/${pollId}?choice=${optionId}`);
     return result;
 };
 
