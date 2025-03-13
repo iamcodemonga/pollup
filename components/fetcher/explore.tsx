@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import SingleChoice from '../polls/SingleChoice';
 import { useInfinitePolls } from '@/hooks/polls';
 import { useInView } from 'react-intersection-observer';
-import { Oval } from "react-loader-spinner"
+import MoonLoader from "react-spinners/MoonLoader"
 
 type Props = {
     id: string,
@@ -65,8 +65,11 @@ const ExplorePollFetcher = () => {
                 </div>
             </section>
             <div ref={ref} className='w-full flex justify-center mt-16'>
-                {isFetchingNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : hasNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : null}
+                {isFetchingNextPage ? <MoonLoader color='hsl(var(--foreground))' size={30} loading={isFetchingNextPage} /> : hasNextPage ? <MoonLoader color='hsl(var(--foreground))' size={30} loading={hasNextPage} /> : null}
             </div>
+            {/* <div ref={ref} className='w-full flex justify-center mt-16'>
+                {isFetchingNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : hasNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : null}
+            </div> */}
         </>
     )
 }
