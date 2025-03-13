@@ -22,12 +22,18 @@ const getErrorMessage = (error: unknown): string => {
 
 export async function addPoll({ question, duration, options }: { question: string, duration: number, options: Array<{ image: null, text: string }> }) {
     let id: string | undefined;
+
+    // Calculate expires_at by adding duration (in days) to the current timestamp
+    // const createdAt = new Date().toISOString();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + duration);
+
     try {
         const supabase = await createClient();
         const { data: pollData, error: pollError } = await supabase
             .from('polls')
             .insert([
-                { question, duration }
+                { question, duration, expires_at: expiresAt }
             ])
             .select()
 

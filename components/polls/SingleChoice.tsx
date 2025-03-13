@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { toast } from 'sonner'
 // import axios from "axios"
-import { useVote } from '@/hooks/vote'
+import { useExploreVote, useVote } from '@/hooks/vote'
 // import { ShineBorder } from '../magicui/shine-border'
 
 type Props = {
@@ -19,7 +19,8 @@ type Props = {
         total_votes: number,
         user_has_voted: boolean,
         selected_option_id: string | null
-      }
+      },
+      bulk: boolean
 }
 
 type TOwner = {
@@ -41,10 +42,11 @@ type TOptions = {
 
   const showResult = true;
 
-const SingleChoice = ({ data }: Props) => {
+const SingleChoice = ({ data, bulk }: Props) => {
 
     const [ choice, setChoice ] = useState<string | null>(data.selected_option_id || null);
-    const { mutate } = useVote(data.id);
+    const { mutate: pollVote } = useVote(data.id);
+    const { mutate: exploreVote } = useExploreVote();
 
     const handleVote = async() => {
         if (choice?.trim() == null) {
@@ -61,11 +63,14 @@ const SingleChoice = ({ data }: Props) => {
             return;
         }
 
-        mutate({ pollId: data.id, optionId: choice });
-        // toast.success("You have voted successfully!", {
-        //     className: "dark:!bg-green-600 dark:!text-white"
-        // })
-        // return;
+        if (bulk) {
+            exploreVote({ pollId: data.id, optionId: choice });
+        } else {
+            pollVote({ pollId: data.id, optionId: choice })
+            toast.success("You have voted successfully!", {
+                className: "dark:!bg-green-600 dark:!text-white"
+            })
+        }
     }
 
     return (
@@ -80,19 +85,19 @@ const SingleChoice = ({ data }: Props) => {
             </div>
             {data.creator ? <div className='flex items-center space-x-1 mb-3'>
                 <span className="text-[10px] ml-2">By {data.creator.username}</span>
-                {data.creator.verified ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 text-blue-500">
+                {data ? data.creator.verified ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 text-blue-500">
                     <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
-                </svg> : null}
+                </svg> : null : null}
             </div> : null}
             <h3 className='font-semibold text-xl lg:text-4xl mb-10 lg:mb-14 !leading-snug'>{data.question}</h3>
             <RadioGroup className='space-y-5' value={choice as string} onValueChange={setChoice}>
-                {data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>
+                {data.options ? data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>
                     <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
                         {option.image ? <img src={option.image} alt={option.text} className='w-7 lg:w-10 h-7 lg:h-10 object-cover rounded-full' /> : null}
                     </div>
                     <div className='w-full space-y-1'>
                         <div className={`flex items-center ${!option.image ? 'mb-2' : null}`}>
-                            <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 text-primary border-primary mr-2 ${option.image ? "hidden" : null}`}  />
+                            <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 text-primary border-primary mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
                             <p className='text-xs'>{option.text}</p>
                         </div>
                         <div className={`w-[100%] h-3 lg:h-4 bg-muted rounded-xl ${!showResult ? "hidden" : null} relative`}>
@@ -101,7 +106,7 @@ const SingleChoice = ({ data }: Props) => {
                         </div>
                         {/* <p className='text-end text-[10px] text-gray-700'>185 votes</p> */}
                     </div>
-                </label>) : null}
+                </label>) : null :null}
             </RadioGroup>
             <div className='mt-7 w-full flex justify-between items-center'>
                 <div className='text-xs text-foreground/80 font-semibold flex items-center space-x-1'>

@@ -54,6 +54,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Calculate if the poll has expired
+    const createdAt = new Date(poll.created_at);
+    const expiryDate = new Date(createdAt);
+    expiryDate.setDate(expiryDate.getDate() + poll.duration); // Add duration to created_at
+    const isExpired = new Date() > expiryDate;
+
     let votequery = supabase
         .from('votes')
         .select('option')
@@ -88,6 +94,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         }
         return 0; // Default: no sorting
     });
+
+    console.log("expired: "+isExpired);
+    // DROP VIEW IF EXISTS user_votes;
+    
     
     const transformedPoll = {
         ...poll,
@@ -98,6 +108,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             user_voted: userVote?.option === option.id,
         })),
         total_votes: poll.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0,
+        expired: isExpired,
         user_has_voted: !!userVote,
         selected_option_id: userVote?.option || null,
     };

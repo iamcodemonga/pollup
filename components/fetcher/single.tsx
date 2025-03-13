@@ -25,7 +25,7 @@ const SinglePollFetcher = ({ id }: Props) => {
     if (isError) return <div>An error occurred</div>
 
     return (
-        <SingleChoice data={data} />
+        <SingleChoice data={data} bulk={false} />
     )
 }
 
