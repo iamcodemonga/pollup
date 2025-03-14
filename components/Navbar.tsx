@@ -54,16 +54,16 @@ const Navbar = () => {
                             </DrawerHeader>
                         <div className='space-y-5 mb-5'>
                                 <Link href={"/"} className='w-full flex justify-center text-2xl font-bold'>Home</Link>
-                                <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Explore</Link>
-                                <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Create Poll</Link>
-                                <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Contact</Link>
-                                <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>About</Link>
+                                <Link href={"/explore"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Explore</Link>
+                                <Link href={"/create"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Create Poll</Link>
+                                <a href={"mailto:codemonga@gmail.com"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Contact</a>
+                                {/* <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>About</Link> */}
                                 <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Login</Link>
                         </div>
                         <DrawerFooter className='py-3 mb-10'>
                                 <div className='w-full flex justify-center items-center'>
                                     <div className='space-x-5'>
-                                        <Link href={"/"} className='bg-blue-500 text-white py-3 px-8 rounded-md'>Sign up</Link>
+                                        <Link href={"/"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Sign up</Link>
                                     </div>
                                 </div>
                         </DrawerFooter>
