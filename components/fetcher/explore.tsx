@@ -5,6 +5,7 @@ import SingleChoice from '../polls/SingleChoice';
 import { useInfinitePolls } from '@/hooks/polls';
 import { useInView } from 'react-intersection-observer';
 import MoonLoader from "react-spinners/MoonLoader"
+import PollSkeleton from '../loader/Poll';
 
 type Props = {
     id: string,
@@ -55,9 +56,10 @@ const ExplorePollFetcher = () => {
     return (
         <>
             <section className='w-full lg:flex justify-center px-3 lg:px-20 mt-40'>
-                {isLoading ? <p>Loading</p> : null}
                 {isError ? <p>An error occurred</p> : null}
                 <div className='space-y-20'>
+                    {isLoading ? <PollSkeleton count={[1,2,3]} /> : null}
+                    {/* <PollSkeleton count={[1,2,3]} /> */}
                     {polls?.pages.map((pages, pageIndex) => (<div key={pageIndex} className='lg:w-[600px] space-y-20'>
                             {pages.length > 0 ? pages.map((page: Props, index: number) => <SingleChoice data={page} bulk={true} key={index} />) : null}
                         </div>

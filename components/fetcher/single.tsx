@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react'
 import SingleChoice from '../polls/SingleChoice';
+import PollSkeleton from '../loader/Poll';
 
 type Props = {
     id: string
@@ -21,11 +22,13 @@ const SinglePollFetcher = ({ id }: Props) => {
         queryFn: () => fetchPoll(id)
     })
 
-    if (isLoading) return <div>Loading...</div>
+    if (isLoading) return <PollSkeleton count={[1]} />
     if (isError) return <div>An error occurred</div>
 
     return (
-        <SingleChoice data={data} bulk={false} />
+        <div className='lg:w-[600px] space-y-20'>
+            <SingleChoice data={data} bulk={false} />
+        </div>
     )
 }
 

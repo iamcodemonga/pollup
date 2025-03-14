@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 // import axios from "axios"
 import { useExploreVote, useVote } from '@/hooks/vote'
 // import { ShineBorder } from '../magicui/shine-border'
+// import { ShineBorder } from '../magicui/shine-border'
 
 type Props = {
     data: {
@@ -74,10 +75,10 @@ const SingleChoice = ({ data, bulk }: Props) => {
     }
 
     return (
-        <div className="relative border border-primary/20 bg-background rounded-md py-10 lg:py-16 px-2 lg:px-5">
-            {/* {data.sponsored ? <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> : null} */}
+        <div className="relative border dark:border dark:border-foreground/30 bg-[#f3f3f3] dark:bg-[#0c0c0c] rounded-md py-10 lg:py-16 px-2 lg:px-5">
+            {/* <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> */}
             <div className='flex w-full justify-end mb-5'>
-                <button type='button' className='w-10 h-10 flex justify-center items-center bg-muted rounded-full'>
+                <button type='button' className='w-10 h-10 flex justify-center items-center bg-border dark:bg-[#404040] rounded-full'>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
                         <path fillRule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clipRule="evenodd" />
                     </svg>
@@ -89,7 +90,8 @@ const SingleChoice = ({ data, bulk }: Props) => {
                     <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
                 </svg> : null : null}
             </div> : null}
-            <h3 className='font-semibold text-xl lg:text-4xl mb-10 lg:mb-14 !leading-snug'>{data.question}</h3>
+            <h3 className='font-semibold text-2xl lg:text-4xl mb-10 lg:mb-14 !leading-snug ml-2'>{data.question}</h3>
+            {/* <p className='font-semibold text-sm lg:text-base mb-10 lg:mb-14 !leading-snug ml-2 text-foreground/50'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio corporis eligendi ad blanditiis praesentium odit, modi, dolores neque enim ex quisquam. Voluptas quia quam itaque nihil vero soluta quisquam adipisci?</p> */}
             <RadioGroup className='space-y-5' value={choice as string} onValueChange={setChoice}>
                 {data.options ? data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>
                     <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
@@ -98,11 +100,11 @@ const SingleChoice = ({ data, bulk }: Props) => {
                     <div className='w-full space-y-1'>
                         <div className={`flex items-center ${!option.image ? 'mb-2' : null}`}>
                             <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 text-primary border-primary mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
-                            <p className='text-xs'>{option.text}</p>
+                            <p className='text-sm'>{option.text}</p>
                         </div>
-                        <div className={`w-[100%] h-3 lg:h-4 bg-muted rounded-xl ${!showResult ? "hidden" : null} relative`}>
-                            <p className='text-[8px] text-center absolute right-[40%] top-[4%] lg:top-[10%]'>{`${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}% (${option.total_votes} votes)`}</p>
-                            <div style={{ width: `${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}%`}} className={`h-3 lg:h-4 bg-primary rounded-xl flex items-center justify-center`}></div>
+                        <div className={`w-[100%] h-5 lg:h-6 bg-border dark:bg-[#404040] rounded-xl ${!showResult ? "hidden" : null} relative`}>
+                            <p className='text-[8px] text-center absolute right-[40%] top-[18%] lg:top-[20%]'>{`${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}% (${option.total_votes} votes)`}</p>
+                            <div style={{ width: `${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}%`}} className={`h-5 lg:h-6 bg-primary rounded-xl flex items-center justify-center`}></div>
                         </div>
                         {/* <p className='text-end text-[10px] text-gray-700'>185 votes</p> */}
                     </div>
