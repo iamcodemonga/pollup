@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Make decisions that count",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{

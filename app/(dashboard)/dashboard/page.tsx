@@ -1,7 +1,16 @@
 import TopCard from '@/components/Topcard'
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
-const page = () => {
+const page = async() => {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+        redirect("/login")
+    }
+
     return (
         <main className='w-full relative overflow-x-hidden ml-14 pr-4 lg:pl-3 overview'>
                 <div className='flex w-full pr-2 py-5'>

@@ -1,12 +1,17 @@
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import PollForm from "@/components/forms/Poll"
+import { createClient } from "@/utils/supabase/server";
 
 
-const page = () => {
+const page = async() => {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log("user: "+user);
+
     return (
         <div className="px-3 lg:px-20">
-            <Navbar />
+            <Navbar user={user?.id as string} />
             <section className="py-20 mt-20 lg:mt-28">
                 <h1 className="text-center text-5xl">Create a Poll</h1>
                 <div className="w-full flex justify-center">

@@ -13,7 +13,7 @@ import { Separator } from './ui/separator'
 import { Moon, Sun } from "lucide-react"
 import { useTheme  } from 'next-themes'
 
-const Navbar = () => {
+const Navbar = ({ user }: { user: string }) => {
     const { setTheme, theme } = useTheme()
     console.log(theme);
 
@@ -58,12 +58,12 @@ const Navbar = () => {
                                 <Link href={"/create"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Create Poll</Link>
                                 <a href={"mailto:codemonga@gmail.com"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Contact</a>
                                 {/* <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>About</Link> */}
-                                <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Login</Link>
+                                <Link href={"/login"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Login</Link>
                         </div>
                         <DrawerFooter className='py-3 mb-10'>
                                 <div className='w-full flex justify-center items-center'>
                                     <div className='space-x-5'>
-                                        <Link href={"/"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Sign up</Link>
+                                        <Link href={"/signup"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Sign up</Link>
                                     </div>
                                 </div>
                         </DrawerFooter>
@@ -86,14 +86,7 @@ const Navbar = () => {
                     <a target='_blank' href="mailto:codemonga@gmail.com">Contact Us</a>
                     {/* <Link href={"/"}>About</Link> */}
                 </div>
-                <div className='space-x-3 flex items-center'>
-                    <button type='button' onClick={() => handleToggleTheme(theme as string)}>{theme == "light" ? <Moon fill='#0ea5e9' className="h-[1.5rem] w-[1.5rem] text-sky-500" /> : <Sun fill='yellow' className="h-[1.5rem] w-[1.5rem] text-yellow-400" />}</button>
-                    <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
-                    <Link href={"/login"}>Login</Link>
-                    <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
-                    <Link href={"/signup"} className='bg-primary text-sm text-black py-3 px-5 rounded-full'>Sign up</Link>
-                </div>
-                {/* <div className='space-x-3 flex items-center'>
+                {user ? <div className='space-x-3 flex items-center'>
                     <button type='button' onClick={() => handleToggleTheme(theme as string)}>{theme == "light" ? <Moon fill='#0ea5e9' className="h-[1.5rem] w-[1.5rem] text-sky-500" /> : <Sun fill='yellow' className="h-[1.5rem] w-[1.5rem] text-yellow-400" />}</button>
                     <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
                     <div className='text-green-500'>💠 $56.9</div>
@@ -101,7 +94,13 @@ const Navbar = () => {
                     <div>
                         <Link href={"/dashboard"} className=''>Dashboard</Link>
                     </div>
-                </div> */}
+                    </div> : <div className='space-x-3 flex items-center'>
+                    <button type='button' onClick={() => handleToggleTheme(theme as string)}>{theme == "light" ? <Moon fill='#0ea5e9' className="h-[1.5rem] w-[1.5rem] text-sky-500" /> : <Sun fill='yellow' className="h-[1.5rem] w-[1.5rem] text-yellow-400" />}</button>
+                    <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
+                    <Link href={"/login"}>Login</Link>
+                    <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
+                    <Link href={"/signup"} className='bg-primary text-sm text-black py-3 px-5 rounded-full'>Sign up</Link>
+                </div>}
             </div>
         </nav>
     )

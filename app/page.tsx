@@ -1,5 +1,3 @@
-"use client"
-
 import Footer from "@/components/Footer";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { NumberTicker } from "@/components/magicui/number-ticker";
@@ -14,12 +12,18 @@ import {
 } from "@/components/ui/accordion"
 import { Separator } from "@/components/ui/separator";
 import { JoinReason, QA } from "@/lib/data";
+import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log("user: "+user);
+
   return (
     <div className="w-full">
-      <Navbar />
+      <Navbar user={user?.id as string} />
       <section className="w-full px-3 lg:px-20">
         <div className="w-full flex justify-center mt-52 lg:mt-60">
           <div className="w-full lg:w-3/5 px-0 lg:px-0 flex flex-col justify-center items-center">
