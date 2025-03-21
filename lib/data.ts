@@ -1,3 +1,5 @@
+// "use client"
+
 export const timeline = [
     {
         id: "1",
@@ -117,4 +119,32 @@ export const QA = [
         question: "How often are new polls added?",
         answer: "New polls are added every hour, so there’s always something new to vote on!"
     },
+]
+
+export const SideBarLinks = [
+    {
+        label: "Overview",
+        href: "/dashboard",
+        active: true
+    },
+    {
+        label: "Polls",
+        href: "/dashboard/polls",
+        active: false
+    },
+    {
+        label: "Votes",
+        href: "/dashboard/votes",
+        active: false
+    },
+    {
+        label: "Tasks",
+        href: "/dashboard/tasks",
+        active: false
+    },
+    {
+        label: "Settings",
+        href: "/dashboard/settings",
+        active: false
+    }
 ]

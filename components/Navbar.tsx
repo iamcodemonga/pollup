@@ -12,10 +12,11 @@ import {
 import { Separator } from './ui/separator'
 import { Moon, Sun } from "lucide-react"
 import { useTheme  } from 'next-themes'
+import { usePathname } from 'next/navigation'
 
 const Navbar = ({ user }: { user: string }) => {
     const { setTheme, theme } = useTheme()
-    console.log(theme);
+    const pathname = usePathname()
 
     const handleToggleTheme = (mode: string) => {
         if (mode == "light") {
@@ -53,17 +54,17 @@ const Navbar = ({ user }: { user: string }) => {
                                 <DrawerTitle className='hidden'>Menu</DrawerTitle>
                             </DrawerHeader>
                         <div className='space-y-5 mb-5'>
-                                <Link href={"/"} className='w-full flex justify-center text-2xl font-bold'>Home</Link>
-                                <Link href={"/explore"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Explore</Link>
-                                <Link href={"/create"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Create Poll</Link>
-                                <a href={"mailto:codemonga@gmail.com"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Contact</a>
+                                <Link href={"/"} className={`w-full flex justify-center ${pathname == "/" ? "text-2xl font-bold" : "font-semibold text-slate-500 text-base dark:text-slate-400"}`}>Home</Link>
+                                <Link href={"/explore"} className={`w-full flex justify-center ${pathname.startsWith("/explore") ? "text-2xl font-bold" : "font-semibold text-slate-500 text-base dark:text-slate-400"}`}>Explore</Link>
+                                <Link href={"/create"} className={`w-full flex justify-center ${pathname.startsWith("/create") ? "text-2xl font-bold" : "font-semibold text-slate-500 text-base dark:text-slate-400"}`}>Create Poll</Link>
+                                <a href={"mailto:codemonga@gmail.com"} className='w-full flex justify-center text-md font-semibold text-slate-500 dark:text-slate-400'>Contact</a>
                                 {/* <Link href={"/"} className='w-full flex justify-center text-md font-semibold text-slate-400'>About</Link> */}
-                                <Link href={"/login"} className='w-full flex justify-center text-md font-semibold text-slate-400'>Login</Link>
+                                {!user ? <Link href={"/login"} className='w-full flex justify-center text-md font-semibold text-slate-500 dark:text-slate-400'>Login</Link> : null}
                         </div>
                         <DrawerFooter className='py-3 mb-10'>
                                 <div className='w-full flex justify-center items-center'>
                                     <div className='space-x-5'>
-                                        <Link href={"/signup"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Sign up</Link>
+                                        {user ? <Link href={"/dashboard"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Dashboard</Link> : <Link href={"/signup"} className='bg-blue-500 text-white py-3 px-8 rounded-full'>Sign up</Link>}
                                     </div>
                                 </div>
                         </DrawerFooter>

@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-// import { User } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"
@@ -55,10 +54,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Calculate if the poll has expired
-    const createdAt = new Date(poll.created_at);
+    const createdAt = new Date(poll?.created_at);
     const expiryDate = new Date(createdAt);
-    expiryDate.setDate(expiryDate.getDate() + poll.duration); // Add duration to created_at
+    expiryDate.setDate(expiryDate.getDate() + poll?.duration); // Add duration to created_at
     const isExpired = new Date() > expiryDate;
+    console.log("IP: "+IP);
+    
 
     let votequery = supabase
         .from('votes')
@@ -67,7 +68,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (user?.id) {
         // If user is authenticated, filter by both voter and IP
-        votequery = votequery.or(`voter.eq.${user.id}, IP.eq.${IP}`);
+        // votequery = votequery.or(`voter.eq.${user.id}, IP.eq.${IP}`);
+        votequery = votequery.or(`voter.eq.${user.id}`);
     } else {
         // If user is not authenticated, filter only by IP
         votequery = votequery.eq('IP', IP);
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // console.log("votes: " + userVote);
         
     // Sort options
-    const sortedOptions = poll.options.sort((a, b) => {
+    const sortedOptions = poll?.options.sort((a, b) => {
         if (sort === 'desc') {
             return b.text.localeCompare(a.text); // Sort by text descending
         } else if (sort === 'asc') {
@@ -101,13 +103,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     
     const transformedPoll = {
         ...poll,
-        creator: poll.creator,
-        options: sortedOptions.map(option => ({
+        creator: poll?.creator,
+        options: sortedOptions?.map(option => ({
             ...option,
             total_votes: option.votes ? option.votes.length : 0,
             user_voted: userVote?.option === option.id,
         })),
-        total_votes: poll.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0,
+        total_votes: poll?.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0,
         expired: isExpired,
         user_has_voted: !!userVote,
         selected_option_id: userVote?.option || null,

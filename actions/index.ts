@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 // import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -166,4 +167,79 @@ export async function loginWithPassword({ email, password }: { email: string, pa
     }
     // Redirect to the home page or dashboard
     redirect('/dashboard');
+}
+
+export async function updateUser({ fullname, birthday, gender }: { fullname: string, birthday: string, gender: string }) {
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+        throw new Error("User not authenticated");
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .update({ fullname, birthday, gender })
+            .eq('id', user.id)
+            .select()
+
+        console.log(data);
+
+        if (error) {
+            throw new Error('Network Error!!! Could not update profile!');
+        }
+    } catch (error) {
+        return {
+            error: getErrorMessage(error)
+        }
+    }
+  
+    // Redirect to the home page or dashboard
+    revalidatePath('/dashboard/settings');
+}
+
+export async function updatePassword({ oldPassword, newPassword }: { oldPassword: string, newPassword: string }) {
+    const supabase = await createClient();
+
+    // Get the current user's session
+    const { data: session, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.session?.user) {
+        throw new Error('User not authenticated');
+    }
+
+    const userEmail = session.session.user.email;
+
+    try {
+        // Step 1: Verify the old password
+        const { data: user, error: signInError } = await supabase.auth.signInWithPassword({
+            email: userEmail as string, 
+            password: oldPassword,
+        });
+
+        console.log(user);
+
+        if (signInError) {
+            throw new Error('Old password is incorrect');
+        }
+
+        // Step 2: Update the password
+        const { error: updateError } = await supabase.auth.updateUser({
+            password: newPassword,
+        });
+
+        if (updateError) {
+            throw new Error(updateError.message);
+        }
+
+    } catch (error) {
+        return {
+            error: getErrorMessage(error)
+        }
+    }
+  
+    // Redirect to the home page or dashboard
+    revalidatePath('/dashboard/settings');
 }

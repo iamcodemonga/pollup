@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { toast } from 'sonner'
+import { motion } from 'motion/react'
 // import axios from "axios"
 import { useExploreVote, useVote } from '@/hooks/vote'
 // import { ShineBorder } from '../magicui/shine-border'
@@ -99,12 +100,12 @@ const SingleChoice = ({ data, bulk }: Props) => {
                     </div>
                     <div className='w-full space-y-1'>
                         <div className={`flex items-center ${!option.image ? 'mb-2' : null}`}>
-                            <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 text-primary border-primary mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
+                            <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 ${option.user_voted ? "text-green-600 border-green-600" : "text-primary border-primary"} mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
                             <p className='text-sm'>{option.text}</p>
                         </div>
-                        <div className={`w-[100%] h-5 lg:h-6 bg-border dark:bg-[#404040] rounded-xl ${!showResult ? "hidden" : null} relative`}>
+                        <div className={`w-[100%] h-5 lg:h-6 bg-border dark:bg-[#404040] rounded-xl overflow-hidden ${!showResult ? "hidden" : null} relative`}>
                             <p className='text-[8px] text-center absolute right-[40%] top-[18%] lg:top-[20%]'>{`${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}% (${option.total_votes} votes)`}</p>
-                            <div style={{ width: `${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}%`}} className={`h-5 lg:h-6 bg-primary rounded-xl flex items-center justify-center`}></div>
+                            <motion.div style={{ width: 0}} animate={{width: `${option.total_votes < 1 ? 0 : ((option.total_votes/data.total_votes)*100).toFixed(0)}%`}} transition={{ duration: 1, ease: 'easeInOut' }} className={`h-5 lg:h-6 ${option.user_voted ? "bg-green-600" : "bg-primary"} rounded-xl flex items-center justify-center`}></motion.div>
                         </div>
                         {/* <p className='text-end text-[10px] text-gray-700'>185 votes</p> */}
                     </div>
