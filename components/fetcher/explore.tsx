@@ -10,8 +10,12 @@ import PollSkeleton from '../loader/Poll';
 type Props = {
     id: string,
     question: string,
+    description: string | null,
     duration: number,
     active: boolean,
+    permission: string,
+    private: string,
+    show_result: string,
     created_at: string,
     creator?: TOwner | null,
     options: Array<TOptions>,
@@ -24,6 +28,7 @@ type TOwner = {
     id: string,
     dp: string,
     username: string,
+    fullname: string,
     email: string,
     verified: boolean
 }
@@ -37,7 +42,7 @@ type TOptions = {
     user_voted: boolean
 }
 
-const ExplorePollFetcher = () => {
+const ExplorePollFetcher = ({ user }: { user: string }) => {
 
     const { data: polls, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfinitePolls();
     const { ref, inView } = useInView();
@@ -61,7 +66,7 @@ const ExplorePollFetcher = () => {
                     {isLoading ? <PollSkeleton count={[1,2,3]} /> : null}
                     {/* <PollSkeleton count={[1,2,3]} /> */}
                     {polls?.pages.map((pages, pageIndex) => (<div key={pageIndex} className='lg:w-[600px] space-y-20'>
-                            {pages.length > 0 ? pages.map((page: Props, index: number) => <SingleChoice data={page} bulk={true} key={index} />) : null}
+                            {pages.length > 0 ? pages.map((page: Props, index: number) => <SingleChoice data={page} bulk={true} user={user} key={index} />) : null}
                         </div>
                     ))}
                 </div>

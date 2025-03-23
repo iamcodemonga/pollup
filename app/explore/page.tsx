@@ -16,7 +16,7 @@ const page = async() => {
     return (
         <div className="">
             <Navbar user={user?.id as string} />
-            <ExplorePollFetcher />
+            <ExplorePollFetcher user={user?.id as string} />
             <Footer />
         </div>
     )

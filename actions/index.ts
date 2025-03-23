@@ -32,20 +32,21 @@ const generateUsername = (email: string) => {
     return `${baseUsername}${randomSuffix}`;
 };
 
-export async function addPoll({ question, duration, options }: { question: string, duration: number, options: Array<{ image: null, text: string }> }) {
+export async function addPoll({ question, description, duration, options, permission, show_result, privacy }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean }) {
     let id: string | undefined;
 
     // Calculate expires_at by adding duration (in days) to the current timestamp
     // const createdAt = new Date().toISOString();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + duration);
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
     try {
-        const supabase = await createClient();
         const { data: pollData, error: pollError } = await supabase
             .from('polls')
             .insert([
-                { question, duration, expires_at: expiresAt }
+                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null) }
             ])
             .select()
 
@@ -58,8 +59,8 @@ export async function addPoll({ question, duration, options }: { question: strin
         if(pollData[0].id){
             const { error: OptionError  } = await supabase
                 .from('options')
-                .insert(options.map((option) => {
-                    return { poll: pollData[0].id, image: option.image, text: option.text}
+                .insert(options.map((option, index) => {
+                    return { poll: pollData[0].id, image: option.image, text: option.text, position: index+1}
                 }))
 
             if (OptionError) {

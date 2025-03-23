@@ -28,7 +28,7 @@ const Navbar = ({ user }: { user: string }) => {
     }
     
     return (
-        <nav className='w-full py-5 fixed top-0 left-0 px-3 lg:px-28 bg-background/5 backdrop-blur-sm wrapper border-b border-primary z-50'>
+        <nav className='w-full py-5 fixed top-0 left-0 px-3 lg:px-28 bg-background/5 backdrop-blur-sm wrapper border- border-primary z-50'>
             <div className='lg:hidden w-full flex justify-between items-center nav-sm'>
                 <Link href={"/"} className='flex items-center font-bold text-2xl'>
                     <span className='text-secondary'>Reap</span>
@@ -89,8 +89,8 @@ const Navbar = ({ user }: { user: string }) => {
                 </div>
                 {user ? <div className='space-x-3 flex items-center'>
                     <button type='button' onClick={() => handleToggleTheme(theme as string)}>{theme == "light" ? <Moon fill='#0ea5e9' className="h-[1.5rem] w-[1.5rem] text-sky-500" /> : <Sun fill='yellow' className="h-[1.5rem] w-[1.5rem] text-yellow-400" />}</button>
-                    <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
-                    <div className='text-green-500'>💠 $56.9</div>
+                    {/* <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
+                    <div className='text-green-500'>💠 $56.9</div> */}
                     <Separator orientation='vertical' className='h-5 bg-slate-300 dark:bg-slate-600' />
                     <div>
                         <Link href={"/dashboard"} className=''>Dashboard</Link>

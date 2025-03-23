@@ -4,21 +4,15 @@ import React, { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { toast } from 'sonner'
 import { motion } from 'motion/react'
-// import axios from "axios"
 import { useExploreVote, useVote } from '@/hooks/vote'
-// import { ShineBorder } from '../magicui/shine-border'
-// import { ShineBorder } from '../magicui/shine-border'
+import { ShineBorder } from '../magicui/shine-border'
 
 type Props = {
     data: {
         id: string,
         question: string,
-        description: string | null,
         duration: number,
         active: boolean,
-        permission: string,
-        private: string,
-        show_result: string,
         created_at: string,
         creator?: TOwner | null,
         options: Array<TOptions>,
@@ -26,14 +20,12 @@ type Props = {
         user_has_voted: boolean,
         selected_option_id: string | null
       },
-      bulk: boolean,
-      user: string,
+      bulk: boolean
 }
 
 type TOwner = {
     id: string,
     dp: string,
-    fullname: string,
     username: string,
     email: string,
     verified: boolean
@@ -48,17 +40,14 @@ type TOptions = {
     user_voted: boolean
 }
 
-// const showResult = true;
+const showResult = true;
 
-const SingleChoice = ({ data, bulk, user }: Props) => {
-
+const LandingPoll = ({ data, bulk }: Props) => {
     const [ choice, setChoice ] = useState<string | null>(data.selected_option_id || null);
     const { mutate: pollVote } = useVote(data.id);
     const { mutate: exploreVote } = useExploreVote();
-    const [ showResult, setShowResult ] = useState<boolean>(data.show_result == "before" ? true : data.user_has_voted ? true : false)
 
     const handleVote = async() => {
-
         if (choice?.trim() == null) {
             toast.error("No option was selected!", {
                 className: "dark:!bg-red-600 dark:!text-white"
@@ -73,24 +62,6 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             return;
         }
 
-        if (data.permission == "users" && !user) {
-            toast.error("Poll strictly for registered users!", {
-                className: "dark:!bg-red-600 dark:!text-white"
-            })
-            return;
-        }
-
-        if (data.creator?.id == user) {
-            toast.error("You can't participate on your poll!", {
-                className: "dark:!bg-red-600 dark:!text-white"
-            })
-            return;
-        }
-
-        if (!showResult) {
-            setShowResult(true)
-        }
-
         if (bulk) {
             exploreVote({ pollId: data.id, optionId: choice });
         } else {
@@ -103,7 +74,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
 
     return (
         <div className="relative border dark:border dark:border-foreground/30 bg-[#f3f3f3] dark:bg-[#0c0c0c] rounded-md py-10 lg:py-16 px-2 lg:px-5">
-            {/* <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> */}
+            <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
             <div className='flex w-full justify-end mb-5'>
                 <button type='button' className='w-10 h-10 flex justify-center items-center bg-border dark:bg-[#404040] rounded-full'>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
@@ -111,15 +82,15 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
                     </svg>
                 </button>
             </div>
-            {data.creator ? <div className='flex items-center space-x-1 mb-2'>
-                <span className="text-[10px] ml-2 text-foreground/60">By {data.creator.fullname}</span>
+            {data.creator ? <div className='flex items-center space-x-1 mb-3'>
+                <span className="text-[10px] ml-2">By {data.creator.username}</span>
                 {data ? data.creator.verified ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 text-blue-500">
                     <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
                 </svg> : null : null}
             </div> : null}
-            <h3 className='font-semibold text-2xl lg:text-4xl !leading-snug ml-2'>{data.question}</h3>
-            {data.description ? <p className='text-sm lg:text-base mt-3 lg:mt-3 !leading-snug ml-2 text-foreground/60'>{data.description}</p> : null}
-            <RadioGroup className='space-y-5 mt-10 lg:mt-14' value={choice as string} onValueChange={setChoice}>
+            <h3 className='font-semibold text-2xl lg:text-4xl mb-10 lg:mb-14 !leading-snug ml-2 text-pretty'>{data.question}</h3>
+            {/* <p className='font-semibold text-sm lg:text-base mb-10 lg:mb-14 !leading-snug ml-2 text-foreground/50'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio corporis eligendi ad blanditiis praesentium odit, modi, dolores neque enim ex quisquam. Voluptas quia quam itaque nihil vero soluta quisquam adipisci?</p> */}
+            <RadioGroup className='space-y-5' value={choice as string} onValueChange={setChoice}>
                 {data.options ? data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>
                     <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
                         {option.image ? <img src={option.image} alt={option.text} className='w-7 lg:w-10 h-7 lg:h-10 object-cover rounded-full' /> : null}
@@ -164,4 +135,4 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
     )
 }
 
-export default SingleChoice
+export default LandingPoll

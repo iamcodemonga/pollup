@@ -124,7 +124,7 @@ const SideBar = () => {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             {loading ? null : <AlertDialogCancel className='hover:bg-foreground hover:text-background'>Cancel</AlertDialogCancel>}
-                            <AlertDialogAction onClick={handleLogout}>{loading ? "Processing..." : "Continue"}</AlertDialogAction>
+                            <AlertDialogAction className='bg-red-600 text-white hover:bg-red-500' onClick={handleLogout}>{loading ? "Processing..." : "Continue"}</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

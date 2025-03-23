@@ -3,20 +3,19 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react'
-import SingleChoice from '../polls/SingleChoice';
 import PollSkeleton from '../loader/Poll';
+import LandingPoll from '../polls/LandingPoll';
 
 type Props = {
-    id: string,
-    user: string
+    id: string
 }
 
 const fetchPoll = async (id: string) => {
-    const response = await axios(`${process.env.NEXT_PUBLIC_ROOTURL}/api/polls/${id}`);
+    const response = await axios(`${process.env.NEXT_PUBLIC_ROOTURL}/api/polls/${id}?type=landing`);
     return response.data;
 };
 
-const SinglePollFetcher = ({ id, user }: Props) => {
+const LandingPollFetcher = ({ id }: Props) => {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["poll", id],
@@ -27,10 +26,8 @@ const SinglePollFetcher = ({ id, user }: Props) => {
     if (isError) return <div>An error occurred</div>
 
     return (
-        <div className='lg:w-[600px] space-y-20'>
-            <SingleChoice data={data} user={user} bulk={false} />
-        </div>
+        <LandingPoll data={data} bulk={false} />
     )
 }
 
-export default SinglePollFetcher
+export default LandingPollFetcher

@@ -22,12 +22,17 @@ export async function GET(request: NextRequest) {
         .select(`
             id,
             question,
+            description,
             duration,
             active,
+            private,
+            show_result,
+            permission,
             created_at,
             creator:users!creator (
               id,
               dp,
+              fullname,
               username,
               email,
               verified
@@ -44,9 +49,14 @@ export async function GET(request: NextRequest) {
               )
             )
           `)
+        .eq("private", false)
+        // .eq("permission", "users")
+        .neq("id", "a2c4ac82-1b54-4734-bf37-91e1201e78a0")
+        .not("creator", "is", null) // Ensure creator is not null
         .gt('expires_at', new Date().toISOString()) // Filter non-expired polls
         .range(offset, offset + limit - 1) // Paginate results
-        .order('created_at', { ascending: false }); // Sort by most recent
+        .order('created_at', { ascending: false }) // Sort by most recent
+        .order("position", { referencedTable: "options", ascending: true }); // Sort by most recent
 
 
     if (error) {

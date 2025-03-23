@@ -1,3 +1,4 @@
+import LandingPollFetcher from "@/components/fetcher/landing";
 import Footer from "@/components/Footer";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { NumberTicker } from "@/components/magicui/number-ticker";
@@ -122,6 +123,7 @@ export default async function Home() {
         <div className="w-full grid grid-cols-2 mt-28 gap-y-28 gap-x-12 items-center">
           <div className="col-span-2 lg:col-span-1 w-full">
             {/* <SingleChoice data={timeline[1]} /> */}
+            <LandingPollFetcher id="a2c4ac82-1b54-4734-bf37-91e1201e78a0" />
           </div>
           <div className="col-span-2 lg:col-span-1">
             <div>

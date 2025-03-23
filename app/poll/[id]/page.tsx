@@ -35,7 +35,7 @@ const page = async({ params } : Pageprops) => {
             <Navbar user={user?.id as string} />
             <section className='w-full lg:flex justify-center mt-40'>
                 <div className='lg:w-[700px] space-y-10'>
-                    <SinglePollFetcher id={id} />
+                    <SinglePollFetcher id={id} user={user?.id as string} />
                 </div>
             </section>
             <Footer />

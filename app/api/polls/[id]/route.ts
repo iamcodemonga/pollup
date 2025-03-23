@@ -4,8 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    // const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(request.url);
     // console.log(await request.json());
+    const type = searchParams.get("type");
     const supabase = await createClient();
     const { id } = await params;
     // const ip = getIpAddress(request);
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Get authenticated user
     const { data: { user } } = await supabase.auth.getUser();
     // const user = { id: null };
-    const sort = 'desc'; // Default to ascending
+    // const sort = 'desc'; // Default to ascending
 
     // Fetch poll with options, total votes, and user/IP vote status
     const { data: poll, error } = await supabase
@@ -24,12 +25,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         .select(`
             id,
             question,
+            description,
             duration,
             active,
+            private,
+            show_result,
+            permission,
             created_at,
             creator:users!creator (
                 id,
                 dp,
+                fullname,
                 username,
                 email,
                 verified
@@ -47,6 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             )
         `)
         .eq('id', id)
+        .order("position", { referencedTable: "options", ascending: true})
         .single();
 
     if (error) {
@@ -84,27 +91,41 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // console.log("votes: " + userVote);
         
     // Sort options
-    const sortedOptions = poll?.options.sort((a, b) => {
-        if (sort === 'desc') {
-            return b.text.localeCompare(a.text); // Sort by text descending
-        } else if (sort === 'asc') {
-            return a.text.localeCompare(b.text); // Sort by text ascending
-        } else if (sort === 'votes_asc') {
-        return a.votes.length - b.votes.length; // Sort by votes ascending
-        } else if (sort === 'votes_desc') {
-        return b.votes.length - a.votes.length; // Sort by votes descending
-        }
-        return 0; // Default: no sorting
-    });
+    // const sortedOptions = poll?.options.sort((a, b) => {
+    //     if (sort === 'desc') {
+    //         return b.text.localeCompare(a.text); // Sort by text descending
+    //     } else if (sort === 'asc') {
+    //         return a.text.localeCompare(b.text); // Sort by text ascending
+    //     } else if (sort === 'votes_asc') {
+    //     return a.votes.length - b.votes.length; // Sort by votes ascending
+    //     } else if (sort === 'votes_desc') {
+    //     return b.votes.length - a.votes.length; // Sort by votes descending
+    //     }
+    //     return 0; // Default: no sorting
+    // });
 
     console.log("expired: "+isExpired);
     // DROP VIEW IF EXISTS user_votes;
+
+    const special = {
+        ...poll,
+        creator: poll?.creator,
+        options: poll.options.map((option, index) => ({
+            ...option,
+            total_votes: option.votes ? (index == 0 ? option.votes.length+5000 : index ==1 ? option.votes.length+3000 : index == 2 ? option.votes.length+500 : index == 3 ? option.votes.length+1500 : 0 ) : 0,
+            user_voted: userVote?.option === option.id,
+        })),
+        total_votes: 10000 + (poll?.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0),
+        expired: isExpired,
+        user_has_voted: !!userVote,
+        selected_option_id: userVote?.option || null,
+    };
     
     
     const transformedPoll = {
         ...poll,
         creator: poll?.creator,
-        options: sortedOptions?.map(option => ({
+        options: poll.options.map(option => ({
             ...option,
             total_votes: option.votes ? option.votes.length : 0,
             user_voted: userVote?.option === option.id,
@@ -118,5 +139,5 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // console.log(transformedPoll);
     
 
-    return NextResponse.json(transformedPoll)
+    return NextResponse.json(type == "landing" ? special : transformedPoll)
 }
