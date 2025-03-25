@@ -170,6 +170,25 @@ export async function loginWithPassword({ email, password }: { email: string, pa
     redirect('/dashboard');
 }
 
+export async function exitApp() {
+    const supabase = await createClient();
+
+    try {
+        const { error } = await supabase.auth.signOut({ scope: 'local' })
+        
+          if (error) {
+            throw new Error("Network error! could not logout!");
+          }
+          
+    } catch (error) {
+        return {
+            error: getErrorMessage(error)
+        }
+    }
+    // Redirect to the home page or dashboard
+    // redirect('/signup');
+}
+
 export async function updateUser({ fullname, birthday, gender }: { fullname: string, birthday: string, gender: string }) {
 
     const supabase = await createClient();

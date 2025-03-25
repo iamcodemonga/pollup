@@ -79,7 +79,7 @@ const ChangePasswordForm = () => {
                         </svg>}
                     </button>
                 </div>
-                <input type={visibility.old ? "text" : "password"} name="currentpassword" id="currentpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                <input type={visibility.old ? "text" : "password"} name="currentpassword" id="currentpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
             </div>
             <div>
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
@@ -93,7 +93,7 @@ const ChangePasswordForm = () => {
                         </svg>}
                     </button>
                 </div>
-                <input type={visibility.new ? "text" : "password"} name="newpassword" id="newpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                <input type={visibility.new ? "text" : "password"} name="newpassword" id="newpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
             </div>
             <div>
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
@@ -107,7 +107,7 @@ const ChangePasswordForm = () => {
                         </svg>}
                     </button>
                 </div>
-                <input type={visibility.confirmed ? "text" : "password"} name="confirmpassword" id="confirmpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={confirmedPassword} onChange={(e) => setConfirmedPassword(e.target.value)} />
+                <input type={visibility.confirmed ? "text" : "password"} name="confirmpassword" id="confirmpassword" placeholder='xxxxxxxxxxxx' className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 bg-transparent text-sm w-full' value={confirmedPassword} onChange={(e) => setConfirmedPassword(e.target.value)} />
             </div>
             <ChangePasswordButton />
         </form>

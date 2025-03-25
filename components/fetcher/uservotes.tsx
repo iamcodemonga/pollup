@@ -48,7 +48,7 @@ const UserVotesFetcher = () => {
                     {pages.length > 0 ? pages.map((page: Props, index: number) => <UserVotesCard data={page} key={index}/>) : null}
                 </div>) : <EmptyUserVotes />}
             </section>
-            <div className='w-full flex justify-center mt-10'>
+            <div className='w-full flex justify-center mt-10 mb-20'>
                 {isFetchingNextPage ? <MoonLoader color='hsl(var(--foreground))' size={30} loading={isFetchingNextPage} /> : hasNextPage ? <button type="button" className='px-10 py-3 rounded-md bg-primary text-xs text-black' onClick={() => fetchNextPage()}>Load more</button> : null}
             </div>
         </>

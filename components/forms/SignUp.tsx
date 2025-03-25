@@ -67,11 +67,11 @@ const SignUpForm = () => {
                 <div className='space-y-5'>
                     <div className='fullname-wrapper'>
                         <label htmlFor="fullname" className='block text-xs text-gray-500 dark:text-gray-400 mb-1 ml-1'>Fullname</label>
-                        <input type="text" name="name" id="fullname" placeholder='e.g john doe' className='px-2 py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={fullname} onChange={(e) => setFullname(e.target.value)} />
+                        <input type="text" name="name" id="fullname" placeholder='e.g john doe' className='px-2 py-3 lg:py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={fullname} onChange={(e) => setFullname(e.target.value)} />
                     </div>
                     <div className='email-wrapper'>
                         <label htmlFor="email" className='block text-xs text-gray-500 dark:text-gray-400 mb-1 ml-1'>Email</label>
-                        <input type="email" name="email" id="email" placeholder='e.g mcdonalds@gmail.com' className='px-2 py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="email" name="email" id="email" placeholder='e.g johndoe23@gmail.com' className='px-2 py-3 lg:py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className='password-wrapper'>
                         <div className='mb-[5px] flex w-full justify-between items-center px-1'>
@@ -85,17 +85,17 @@ const SignUpForm = () => {
                                 </svg>}
                             </button>
                         </div>
-                        <input type={visibility ? "text" : "password"} name="password" id="password" placeholder='xxxxxxxxxxxx' className='px-2 py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <input type={visibility ? "text" : "password"} name="password" id="password" placeholder='xxxxxxxxxxxx' className='px-2 py-3 lg:py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                 </div>
                 <div className='w-full flex justify-center'>
                     <div className='w-full space-y-4'>
                         <div className="flex items-center space-x-2 ml-1">
                             <input type="checkbox" name="terms" id="terms" checked className='border-2' onChange={() => {}} />
-                            <label htmlFor="terms" className='block text-xs text-gray-500 dark:text-gray-300'>I agree with all the <Link href={'/'} className='underline text-blue-700'>terms and conditions</Link></label>
+                            <label htmlFor="terms" className='block text-xs text-gray-500 dark:text-gray-300'>I agree with all the <Link href={'/'} className='underline text-blue-500 dark:text-foreground'>terms and conditions</Link></label>
                         </div>
                         <RegisterButton />
-                        <small className='block text-gray-500 dark:text-gray-300 text-center text-xs'>Already have an account? <Link href={"/login"} className='underline text-blue-700'>Login</Link></small>
+                        <small className='block text-gray-500 dark:text-gray-300 text-center text-xs'>Already have an account? <Link href={"/login"} className='underline text-blue-500 dark:text-foreground'>Login</Link></small>
                     </div>
                 </div>
             </form>

@@ -1,45 +1,52 @@
 "use client"
 
-import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import {
     AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
-    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
+    AlertDialogAction,
+     AlertDialogCancel,
+      AlertDialogFooter
 } from "@/components/ui/alert-dialog"
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { SideBarLinks } from '@/lib/data'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { exitApp } from '@/actions'
+import { toast } from 'sonner'
+import { useState } from 'react'
+// import { FormEvent } from 'react'
 
 const SideBar = () => {
-    const [ loading, setLoading ] = useState(false)
+    const [pending, setPending ] = useState<boolean>(false)
     const { setTheme, theme } = useTheme()
     const router = useRouter()
     const pathname = usePathname()
     console.log(pathname)
 
     const handleLogout = async() => {
-        const supabase = createClient();
-        setLoading(true)
+        setPending(true)
         try {
-            const { error } = await supabase.auth.signOut()
-            if (error) {
-                throw new Error(error.message)
-            } 
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
+            const result = await exitApp()
+              if (result?.error) {
+                  toast.error(result.error, {
+                      className: "dark:!bg-red-600 dark:!text-white"
+                  })
+                  setPending(false)
+                  return;
+              }
+        } catch (err) {
+            console.log(err);  
         }
+        toast.success("Logout successful!", {
+            className: "dark:!bg-green-600 dark:!text-white"
+        })
         router.push("/login")
+        setPending(false)
     }
 
     const handleToggleTheme = (mode: string) => {
@@ -117,14 +124,14 @@ const SideBar = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
                         </svg>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className=''>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>This action cannot be undone. This will permanently delete your account and remove your data from our servers.</AlertDialogDescription>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>This action will log you out of Reapoll in this device. your session will still be active on other devices.</AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            {loading ? null : <AlertDialogCancel className='hover:bg-foreground hover:text-background'>Cancel</AlertDialogCancel>}
-                            <AlertDialogAction className='bg-red-600 text-white hover:bg-red-500' onClick={handleLogout}>{loading ? "Processing..." : "Continue"}</AlertDialogAction>
+                        <AlertDialogFooter className='flex justify-end flex-row space-x-3 items-center'>
+                            {pending ? null : <AlertDialogCancel className='hover:bg-foreground hover:text-background my-0'>Cancel</AlertDialogCancel>}
+                            <AlertDialogAction onClick={handleLogout} className='bg-red-600 text-white hover:bg-red-500 !my-0'>{pending ? "logging out..." : "Continue"}</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

@@ -93,13 +93,13 @@ const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob:
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
                     <label htmlFor="fullname" className='block text-xs text-gray-600 dark:text-gray-400'>Fullname</label>
                 </div>
-                <input type="text" name="fullname" id="fullname" placeholder="Your full name" className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={fullname} onChange={(e) => setFullname(e.target.value)} />
+                <input type="text" name="fullname" id="fullname" placeholder="Your full name" className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={fullname} onChange={(e) => setFullname(e.target.value)} />
             </div>
             <div>
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
                     <label htmlFor="gender" className='block text-xs text-gray-600 dark:text-gray-400'>Gender</label>
                 </div>
-                <select name="gender" id="gender" className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={gender}  onChange={(e) => setGender(e.target.value)}>
+                <select name="gender" id="gender" className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={gender}  onChange={(e) => setGender(e.target.value)}>
                     <option value="">select your gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -110,7 +110,7 @@ const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob:
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
                     <label htmlFor="fullname" className='block text-xs text-gray-600 dark:text-gray-400'>Date of birth</label>
                 </div>
-                <input type="date" name="birthday" id="birthday" placeholder="Add your date of birth" max={maxDate} className='px-2 py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+                <input type="date" name="birthday" id="birthday" placeholder="Add your date of birth" max={maxDate} className='px-2 py-3 lg:py-[8px] border-[1.5px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={birthday} onChange={(e) => setBirthday(e.target.value)} />
             </div>
             <EditProfileButton />
         </form>

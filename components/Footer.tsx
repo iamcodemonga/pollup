@@ -4,17 +4,17 @@ const Footer = () => {
   return (
     <footer className="w-full">
         <div className="lg:flex justify-between items-start py-20 lg:py-52 mt-5 lg:px-20 space-y-16 lg:space-y-0">
-            <div className="space-y-4">
+            <div className="space-y-4 lg:space-y-10">
                 <Link href={"/"} className="block text-center">Home</Link>
                 <Link href={"/"} className="block text-center">Contact</Link>
                 <Link href={"/"} className="block text-center">Join Us</Link>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 lg:space-y-10">
                 <Link href={"/"} className="block text-center">Twitter</Link>
                 <Link href={"/"} className="block text-center">Discord</Link>
                 <Link href={"/"} className="block text-center">LinkedIn</Link>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 lg:space-y-10">
                 <Link href={"/"} className="block text-center">Terms Of Service</Link>
                 <Link href={"/"} className="block text-center">Privacy Policy</Link>
             </div>

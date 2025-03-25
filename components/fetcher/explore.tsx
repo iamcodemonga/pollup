@@ -60,7 +60,7 @@ const ExplorePollFetcher = ({ user }: { user: string }) => {
 
     return (
         <>
-            <section className='w-full lg:flex justify-center px-3 lg:px-20 mt-40'>
+            <section className='w-full lg:flex justify-center px-3 lg:px-20 mt-24 lg:mt-40'>
                 {isError ? <p>An error occurred</p> : null}
                 <div className='space-y-20'>
                     {isLoading ? <PollSkeleton count={[1,2,3]} /> : null}

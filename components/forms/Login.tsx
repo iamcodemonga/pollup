@@ -60,7 +60,7 @@ const LoginForm = () => {
             <div className='space-y-5'>
                 <div className="email-wrapper">
                     <label htmlFor="email" className='block text-xs text-gray-500 dark:text-gray-400 mb-1 ml-1'>Email</label>
-                    <input type="email" name="email" id="email" placeholder='e.g mcdonalds@gmail.com' className='px-2 py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="email" name="email" id="email" placeholder='e.g johndoe23@gmail.com' className='px-2 py-3 lg:py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="password-wrapper">
                     <div className='mb-[5px] flex w-full justify-between items-center px-1'>
@@ -74,15 +74,15 @@ const LoginForm = () => {
                             </svg>}
                         </button>
                     </div>
-                    <input type={visibility ? "text" : "password"} name="password" id="password" placeholder='xxxxxxxxxxxx' className='px-2 py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type={visibility ? "text" : "password"} name="password" id="password" placeholder='xxxxxxxxxxxx' className='px-2 py-3 lg:py-[8px] border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
             </div>
             <div className='w-full flex justify-center'>
                 <div className='w-full space-y-4'>
-                    <small className='block text-gray-500 dark:text-gray-400 text-center text-xs'>Don&apos;t have account? <Link href={"/signup"} className='underline text-blue-700'>Signup</Link></small>
+                    <small className='block text-gray-500 dark:text-gray-400 text-center text-xs'>Don&apos;t have an account? <Link href={"/signup"} className='underline text-blue-500 dark:text-foreground'>Signup</Link></small>
                     <LoginButton />
                     <Dialog>
-                        <DialogTrigger className='block w-full text-center text-xs underline text-blue-700'>I forgot my password!</DialogTrigger>
+                        <DialogTrigger className='block w-full text-center text-xs underline text-blue-500 dark:text-foreground'>I forgot my password!</DialogTrigger>
                         <DialogContent className='py-10'>
                         <DialogHeader>
                             <DialogTitle className='mb-2'>Forgot Password?</DialogTitle>
