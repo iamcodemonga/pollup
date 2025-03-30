@@ -74,9 +74,28 @@ const ExplorePollFetcher = ({ user }: { user: string }) => {
             <div ref={ref} className='w-full flex justify-center mt-16'>
                 {isFetchingNextPage ? <MoonLoader color='hsl(var(--foreground))' size={30} loading={isFetchingNextPage} /> : hasNextPage ? <MoonLoader color='hsl(var(--foreground))' size={30} loading={hasNextPage} /> : null}
             </div>
-            {/* <div ref={ref} className='w-full flex justify-center mt-16'>
-                {isFetchingNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : hasNextPage ? <Oval visible={true} height="30" width="30" color="hsl(var(--foreground))" secondaryColor='hsl(var(--border))' strokeWidth={3} ariaLabel="oval-loading" wrapperStyle={{}} wrapperClass="!bg-transparent" /> : null}
-            </div> */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "ItemList",
+                    "itemListElement": polls?.pages.flat().map((poll, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": {
+                        "@type": "Question",
+                        "name": poll.question,
+                        "description": poll.description || "Vote on this poll and earn rewards",
+                        "url": `${process.env.NEXT_PUBLIC_SITE_URL}/poll/${poll.id}`,
+                        "dateCreated": poll.created_at,
+                        "answerCount": poll.total_votes,
+                        "author": {
+                        "@type": "Person",
+                        "name": poll.creator?.fullname || "Anonymous"
+                        }
+                    }
+                    })) || []
+                })}
+            </script>
         </>
     )
 }

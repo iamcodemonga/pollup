@@ -29,7 +29,50 @@ const SinglePollFetcher = ({ id, user }: Props) => {
     return (
         <div className='lg:w-[600px] space-y-20'>
             <SingleChoice data={data} user={user} bulk={false} />
+            <PollSchema poll={data} />
         </div>
+    )
+}
+
+function PollSchema({ poll }: { poll: {
+    id: string,
+    question: string,
+    description: string | null,
+    created_at: string,
+    creator?: {
+        id: string,
+        fullname: string,
+        username: string,
+    } | null,
+    options: Array<{
+        id: string,
+        text: string,
+        image?: string | null,
+        votes: Array<string | null>,
+        total_votes: number,
+    }>,
+    total_votes: number,
+  } }) {
+    return (
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Question",
+          "name": poll.question,
+          "text": poll.description,
+          "dateCreated": poll.created_at,
+          "author": {
+            "@type": "Person",
+            "name": poll.creator?.fullname
+          },
+          "answerCount": poll.total_votes,
+          "suggestedAnswer": poll.options.map(option => ({
+            "@type": "VotingAction",
+            "name": option.text,
+            "voteCount": option.votes
+          }))
+        })}
+      </script>
     )
 }
 

@@ -16,11 +16,27 @@ import { JoinReason, QA } from "@/lib/data";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
-export default async function Home() {
+export const metadata = {
+  title: `Create & Participate in Polls, Earn massive Rewards | ${process.env.BRANDNAME}`,
+  description: 'Create free polls or vote on trending topics to earn redeemable massive rewards.',
+  alternates: {
+    canonical: '/'
+  },
+  // openGraph: {
+  //   images: [
+  //     {
+  //       url: '/og-landing.jpg',
+  //       width: 1200,
+  //       height: 630,
+  //       alt: 'Pollify - Crypto Poll Platform',
+  //     }
+  //   ]
+  // }
+}
 
+export default async function Home() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  console.log("user: "+user);
 
   return (
     <div className="w-full">
@@ -41,7 +57,7 @@ export default async function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>Create Poll
               </Link>
-              <Link href="/signup" className="flex justify-between items-center space-x-10 px-5 py-3 bg-transparent text-foreground rounded-full text-[12px] border border-foreground">Sign up <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 ml-2">
+              <Link href={user?.id ? "/explore" : "/signup"} className="flex justify-between items-center space-x-10 px-5 py-3 bg-transparent text-foreground rounded-full text-[12px] border border-foreground">{user?.id ? "Start voting " : "Sign up "}<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 ml-2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                 </svg>
               </Link>
@@ -211,7 +227,7 @@ export default async function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>Create Poll
                   </Link>
-                  <Link href="/" className="flex justify-between items-center space-x-10 px-5 py-3 bg-backgroun text-background rounded-full text-[12px] border border-background">Sign up <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 ml-2">
+                  <Link href={user?.id ? "/explore" : "/signup"} className="flex justify-between items-center space-x-10 px-5 py-3 bg-backgroun text-background rounded-full text-[12px] border border-background">{user?.id ? "Start voting " : "Sign up "}<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 ml-2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                     </svg>
                   </Link>

@@ -35,18 +35,13 @@ interface TVote {
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const supabase = await createClient();
-    // const IP = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-    // const IP = "127.0.0.1";
 
     // Get authenticated user
     const { data: { user } } = await supabase.auth.getUser();
-    // const sort = 'desc'; // Default to ascending
     const page = Number(searchParams.get("page") || "1");
     const limit = Number(searchParams.get("limit") || "9");
     const offset = (page - 1) * limit;
 
-    // Fetch poll with options, total votes, and user/IP vote status
-    // Step 1: Fetch the polls the user has voted on, including creator and votes
     const { data: votes, error } = await supabase
         .from('votes')
         .select(`
@@ -78,11 +73,11 @@ export async function GET(request: NextRequest) {
         .order('created_at', { ascending: false }); // Sort by most recent
 
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
 
-    // Step 2: Transform the data
+
     const currentTime = new Date();
 
     const transformedPolls = votes.map((item) => {

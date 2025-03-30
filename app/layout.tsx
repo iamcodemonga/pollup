@@ -17,10 +17,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Reapoll - Decide and Earn",
-  description: "Make decisions that count",
-};
-
+  metadataBase: new URL(process.env.ROOTURL || 'https://reapoll.com'),
+  title: {
+    default: `${process.env.BRANDNAME} - Create & Participate in Polls, Earn Crypto Rewards`,
+    template: `%s | ${process.env.BRANDNAME}`
+  },
+  description: 'Create free polls or vote on trending topics to earn redeemable massive rewards.',
+  keywords: ['online polls', 'earn crypto voting', 'survey platform', 'poll rewards'],
+  // openGraph: {
+  //   type: 'website',
+  //   locale: 'en_US',
+  //   siteName: `${process.env.BRANDNAME}`,
+  //   images: '/og-default.jpg'
+  // },
+  // twitter: {
+  //   card: 'summary_large_image',
+  //   creator: '@pollify'
+  // },
+  // robots: {
+  //   index: true,
+  //   follow: true,
+  // }
+}
 
 export default function RootLayout({
   children,
@@ -44,10 +62,32 @@ export default function RootLayout({
           />
           <TanstackProvider>
             {children}
+            <SchemaScript />
           </TanstackProvider>
           <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>
     </html>
   );
+}
+
+// Schema.org for Organization (global)
+function SchemaScript() {
+  return (
+    <script type="application/ld+json">
+      {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": `${process.env.BRANDNAME}`,
+        "url": process.env.NEXT_PUBLIC_SITE_URL,
+        "description": "Online polling platform with rewards",
+        "founder": "codemonga",
+        "foundingDate": "2025",
+        "sameAs": [
+          "https://twitter.com/reapoll",
+          "https://linkedin.com/company/reapoll"
+        ]
+      })}
+    </script>
+  )
 }

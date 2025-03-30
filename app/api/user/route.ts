@@ -4,7 +4,6 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const supabase = await createClient();
-    // const { data: { user } } = await supabase.auth.getUser();
     const userid = searchParams.get("id");
     // const user = { id: "a77d9b7a-5cce-49a3-997a-4ecd9509c305" };
 

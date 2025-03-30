@@ -2,11 +2,19 @@ import ExplorePollFetcher from '@/components/fetcher/explore'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/utils/supabase/server'
-// import { Circle } from 'lucide-react'
+import { Metadata } from 'next'
 import React from 'react'
-// import SingleChoice from '@/components/polls/SingleChoice'
 
 export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+    title: 'Explore Polls & Earn Rewards',
+    description: 'Vote on trending polls about technology, business, and politics to earn rewards.',
+    keywords: ['trending polls', 'popular surveys', 'current polls'],
+    alternates: {
+      canonical: '/explore'
+    }
+  }
 
 const page = async() => {
     const supabase = await createClient();

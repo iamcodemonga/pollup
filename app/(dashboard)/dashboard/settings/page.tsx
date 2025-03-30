@@ -34,7 +34,7 @@ const page = async() => {
                         <h3 className="text-center lg:font-bold text-xl px-3">Profile Photo/Logo</h3>
                         <div className='w-full flex justify-center'>
                             <Avatar className='flex flex-col justify-center items-center w-28 h-28 lg:w-36 lg:h-36'>
-                                <AvatarImage src="https://images.pexels.com/photos/29761732/pexels-photo-29761732/free-photo-of-traditional-vietnamese-incense-drying-process.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load" className='object-cover' />
+                                <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhslR_IBbWqq6aKDwSybRj5I7kZnEI5Rhd_g&s" className='object-cover' />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                         </div>

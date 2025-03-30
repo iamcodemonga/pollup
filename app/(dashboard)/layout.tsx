@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import SideBar from "@/components/dashboard/SideBar";
@@ -13,11 +12,6 @@ import { ThemeProvider } from "@/components/Theme-provider";
 //   variable: "--font-geist-mono",
 //   subsets: ["latin"],
 // });
-
-export const metadata: Metadata = {
-  title: "Reappoll - Decide and Earn",
-  description: "Make decisions that count",
-};
 
 export default function RootLayout({
   children,

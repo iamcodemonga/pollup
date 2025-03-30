@@ -6,13 +6,9 @@ export const dynamic = "force-dynamic"
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const supabase = await createClient();
-    // const IP = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-    // const IP = "127.0.0.1";
 
     // Get authenticated user
     const { data: { user } } = await supabase.auth.getUser();
-    // const user = { id: "a77d9b7a-5cce-49a3-997a-4ecd9509c305" };
-    // const sort = 'desc'; // Default to ascending
     const page = Number(searchParams.get("page") || "1");
     const limit = Number(searchParams.get("limit") || "9");
     const active: string = searchParams.get("filter") || "none";
@@ -91,10 +87,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: query.error.message }, { status: 500 });
     }
 
-     // Step 2: Transform the data
-     const currentTime = new Date();
+    const currentTime = new Date();
 
-      // Transform the data
+    // Transform the data
     const transformedPolls = await Promise.all(
         query.data.map(async (poll) => {
         // Sort options in descending order by created_at
@@ -122,14 +117,11 @@ export async function GET(request: NextRequest) {
       return {
         ...poll,
         creator: poll.creator,
-        // options: optionsWithVotes,
         total_votes,
         isExpired
       };
     })
   );
-
-  // console.log(transformedPolls);
   
   return NextResponse.json(transformedPolls);
 }

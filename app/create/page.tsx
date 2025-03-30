@@ -2,7 +2,16 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import PollForm from "@/components/forms/Poll"
 import { createClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
 
+
+export const metadata: Metadata = {
+    title: 'Create Custom Polls & Surveys for Free',
+    description: 'Design polls with multiple options and categories. Gather insights and share your poll.',
+    alternates: {
+      canonical: '/create-poll'
+    }
+  }
 
 const page = async() => {
     const supabase = await createClient();
@@ -24,8 +33,29 @@ const page = async() => {
                 </div>
             </section>
             <Footer />
+            <HowToSchema />
         </div>
     )
 }
+
+function HowToSchema() {
+    return (
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": `Create a Poll on ${process.env.BRANDNAME}`,
+          "description": "Step-by-step guide to creating polls",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "text": "Click the Create Poll button"
+            },
+            // Add more steps
+          ]
+        })}
+      </script>
+    )
+  }
 
 export default page
