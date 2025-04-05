@@ -19,51 +19,6 @@ type TGenerateMetadataProps = {
 
 export const dynamic = "force-dynamic";
 
-// const fetchPollData = async(id: string) => {
-//     const supabase = await createClient();
-//         const { data: poll, error: pollError } = await supabase
-//             .from('polls')
-//             .select(`
-//                 id,
-//                 question,
-//                 description,
-//                 created_at,
-//                 creator:users!creator (
-//                     id,
-//                     fullname,
-//                     username
-//                 ),
-//                 options:options!poll (
-//                     id,
-//                     image,
-//                     text,
-//                     votes:votes!option (
-//                         id
-//                     )
-//                 ),
-//                 total_votes:votes!poll (
-//                     id
-//                 )
-//             `)
-//             .eq('id', id)
-//             .order("position", { referencedTable: "options", ascending: true})
-//             .single();
-        
-//         if (pollError) {
-//             redirect("/")
-//         }
-
-//     return  {
-//         ...poll,
-//         creator: poll?.creator,
-//         options: poll.options.map(option => ({
-//             ...option,
-//             total_votes: option.votes ? option.votes.length : 0
-//         })),
-//         total_votes: poll?.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0
-//     };
-// }
-
 export async function generateMetadata({ params }: TGenerateMetadataProps): Promise<Metadata> {
     const { id } = await params;
     const poll = await getPollById(id);
@@ -75,9 +30,31 @@ export async function generateMetadata({ params }: TGenerateMetadataProps): Prom
             canonical: `/poll/${poll.id}`
         //   canonical: `/poll/${poll.id}/${poll.slug}`
         },
-        // openGraph: {
-        //   images: poll.image || '/og-poll-default.jpg'
-        // }
+        openGraph: {
+            title: poll.question,
+            description: `Join the discussion on ${poll.question}`,
+            images: [
+              {
+                url: `${process.env.ROOTURL}/api/og/${id}`, // Points to your OG image route
+                width: 1200,
+                height: 630,
+                alt: poll.question,
+              }
+            ]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: poll.question,
+            description: `Vote now: ${poll.question}`,
+            images: [
+                {
+                url: `${process.env.ROOTURL}/api/og/${id}`,
+                width: 1200,
+                height: 630,
+                alt: poll.question,
+                }
+            ] // Same image URL
+        }
     }
 }
 

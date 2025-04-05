@@ -22,16 +22,16 @@ export const metadata = {
   alternates: {
     canonical: '/'
   },
-  // openGraph: {
-  //   images: [
-  //     {
-  //       url: '/og-landing.jpg',
-  //       width: 1200,
-  //       height: 630,
-  //       alt: 'Pollify - Crypto Poll Platform',
-  //     }
-  //   ]
-  // }
+  openGraph: {
+    images: [
+      {
+        url: `${process.env.ROOTURL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'reapoll - Vote and reap',
+      }
+    ]
+  }
 }
 
 export default async function Home() {

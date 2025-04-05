@@ -24,20 +24,20 @@ export const metadata: Metadata = {
   },
   description: 'Create free polls or vote on trending topics to earn redeemable massive rewards.',
   keywords: ['online polls', 'earn crypto voting', 'survey platform', 'poll rewards'],
-  // openGraph: {
-  //   type: 'website',
-  //   locale: 'en_US',
-  //   siteName: `${process.env.BRANDNAME}`,
-  //   images: '/og-default.jpg'
-  // },
-  // twitter: {
-  //   card: 'summary_large_image',
-  //   creator: '@pollify'
-  // },
-  // robots: {
-  //   index: true,
-  //   follow: true,
-  // }
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: `${process.env.BRANDNAME}`,
+    images: `${process.env.ROOTURL}/og-image.jpg`
+  },
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@codemonga'
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
 }
 
 export default function RootLayout({
