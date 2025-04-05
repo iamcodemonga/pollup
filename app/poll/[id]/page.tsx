@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: TGenerateMetadataProps): Prom
             description: `Join the discussion on ${poll.question}`,
             images: [
               {
-                url: `${process.env.ROOTURL}/api/og/${id}`, // Points to your OG image route
+                url: `${process.env.ROOTURL}/og/${id}`, // Points to your OG image route
                 width: 1200,
                 height: 630,
                 alt: poll.question,
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: TGenerateMetadataProps): Prom
             description: `Vote now: ${poll.question}`,
             images: [
                 {
-                url: `${process.env.ROOTURL}/api/og/${id}`,
+                url: `${process.env.ROOTURL}/og/${id}`,
                 width: 1200,
                 height: 630,
                 alt: poll.question,
