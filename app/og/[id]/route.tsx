@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {poll.options.map(opt => (
                   <div key={opt.id} style={{ display: 'flex', flexDirection: "column", justifyContent: "center" }}>
-                    <span style={{ fontSize: 20, marginBottom: 5 }}>{opt.text} ({((opt.total_votes/poll.total_votes)*100).toFixed(0)}%)</span>
+                    <span style={{ fontSize: 20, marginBottom: 5 }}>{opt.text} ({opt.total_votes == 0 ? 0 : ((opt.total_votes/poll.total_votes)*100).toFixed(0)}%)</span>
                     <div style={{ 
                       width: `${opt.total_votes == 0 ? "0%" : ((opt.total_votes/poll.total_votes)*100).toFixed(0)}%`,
                       height: 25,
