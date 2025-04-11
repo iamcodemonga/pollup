@@ -12,7 +12,7 @@ import { Separator } from '../ui/separator';
 
 const DashboardTopBar = ({ user }: { user: string }) => {
     return (
-        <div className='pr-2 pb-5 pt-2 sticky top-0'>
+        <div className='pr-2 pb-5 pt-2 sticky top-0 z-50'>
             <div className='bg-background border flex lg:hidden items-center justify-between w-full py-5 px-3 lg:px-5 rounded-md nav-sm'>
                 <Link href={"/"} className='flex items-center font-bold text-2xl'>
                     <span className='text-secondary'>Reap</span>

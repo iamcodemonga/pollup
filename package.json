@@ -27,7 +27,7 @@
     "clipboard-copy": "^4.0.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
-    "motion": "^12.5.0",
+    "motion": "^12.6.3",
     "next": "^15.2.4",
     "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.4",
