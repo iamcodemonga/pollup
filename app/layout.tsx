@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/Theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from 'nextjs-toploader';
 import { TanstackProvider } from "@/components/providers/Tanstack";
+import SiteAnalytics from "@/components/providers/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SiteAnalytics />
         <ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
           <NextTopLoader
             color="#2299DD"

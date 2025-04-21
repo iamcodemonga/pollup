@@ -139,9 +139,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         user_has_voted: !!userVote,
         selected_option_id: userVote?.option || null,
     };
-
-    console.log(specialPoll);
-    
     
     return NextResponse.json(type == "landing" ? specialPoll : transformedPoll)
 }
