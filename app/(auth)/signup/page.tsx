@@ -23,7 +23,7 @@ const page = async() => {
     if (user?.id) {
         redirect("/dashboard")
     }
-
+    
     return (
         <div className='w-full lg:flex'>
             <div className='fixed top-0 left-0 m-4 z-50'>

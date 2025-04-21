@@ -3,6 +3,7 @@ import TaskCard from '@/components/dashboard/TaskCard';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { tasks, milestones } from '@/lib/data';
+import { getUserById } from '@/lib/queries/server';
 
 const page = async() => {
     const supabase = await createClient();
@@ -12,6 +13,9 @@ const page = async() => {
         redirect("/login")
     }
 
+    const details = await getUserById(user.id, ["achievement"]) as unknown as { achievement: string[] }
+    
+
     return (
         <main className='w-full relative overflow-x-hidden ml-14 lg:pl-3 allpolls pb-20'>
             <DashboardTopBar user={user.id} />
@@ -20,8 +24,8 @@ const page = async() => {
             </div>
             <div className='pr-2'>
                 <h4 className='text-2xl lg:text-3xl'>Today&apos;s task</h4>
-                <div className='mt-4 grid lg:grid-cols-5 gap-3 mb-10'>
-                    {tasks.length > 0 ? tasks.map((task, index) => <TaskCard task={task} key={index} userid={task.type == "referral" ? user.id : ""} >
+                <div className='mt-4 grid lg:grid-cols-4 gap-3 mb-10'>
+                    {tasks.length > 0 ? tasks.map((task, index) => <TaskCard task={task} key={index} userid={task.type == "referral" ? user.id : ""} completed={details.achievement.includes(task.type)} category="task" >
                         { task.type == "signup" ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7 text-primary">
                             <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
                         </svg> : task.type == "profile" ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7 text-primary">
@@ -38,7 +42,7 @@ const page = async() => {
                 </div>
                 <h4 className='text-2xl lg:text-3xl'>Milestones</h4>
                 <div className='mt-4 grid lg:grid-cols-4 gap-3 mb-10'>
-                    {milestones.length > 0 ? milestones.map((milestone, index) =>  <TaskCard task={milestone} key={index} >
+                    {milestones.length > 0 ? milestones.map((milestone, index) =>  <TaskCard task={milestone} key={index} category="milestone" completed={details.achievement.includes(milestone.type)} >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 text-primary">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
                         </svg>

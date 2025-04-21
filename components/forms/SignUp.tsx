@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import RegisterButton from '../serverButtons/RegisterButton'
+import { useSearchParams } from 'next/navigation'
+import { tasks } from '@/lib/data/clientMockData'
 // import MoonLoader from 'react-spinners/MoonLoader'
 
 const SignUpForm = () => {
@@ -13,6 +15,10 @@ const SignUpForm = () => {
     const [ email, setEmail ] = useState<string>("");
     const [ password, setPassword ] = useState<string>("");
     const [ visibility, setVisibility ] = useState<boolean>(false);
+    const searchParams = useSearchParams()
+    const referrer = searchParams.get("ref");
+    console.log(referrer);
+    
 
     const handleSubmit = async() => {
         const fullnameRegex = /^([a-zA-Z ]+)$/;
@@ -40,7 +46,7 @@ const SignUpForm = () => {
         }
 
         try {
-            const result = await signUp({ fullname, email, password })
+            const result = await signUp({ fullname, email, password, referrer, reward: tasks[0].reward })
             if (result?.error) {
                 toast.error(result.error, {
                     className: "dark:!bg-red-600 dark:!text-white"

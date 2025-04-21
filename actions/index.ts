@@ -1,5 +1,6 @@
 "use server"
 
+import { findExistingUserById, referralReward, taskCompletionReward } from "@/lib/queries/server";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 // import { revalidatePath } from "next/cache";
@@ -32,7 +33,7 @@ const generateUsername = (email: string) => {
     return `${baseUsername}${randomSuffix}`;
 };
 
-export async function addPoll({ question, description, duration, options, permission, show_result, privacy }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean }) {
+export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number }) {
     let id: string | undefined;
 
     // Calculate expires_at by adding duration (in days) to the current timestamp
@@ -68,6 +69,10 @@ export async function addPoll({ question, description, duration, options, permis
                 throw new Error("Network error!");
             }
         }
+
+        if (user?.id && eligible) {
+            await taskCompletionReward(user.id, "poll", reward)
+        }
         
     } catch (error) {
         return {
@@ -80,7 +85,7 @@ export async function addPoll({ question, description, duration, options, permis
 }
 
 // Sign Up Action
-export async function signUp({ fullname, email, password }: { fullname: string, email: string, password: string }) {
+export async function signUp({ fullname, email, password, referrer, reward }: { fullname: string, email: string, password: string, referrer?: string | null, reward?: number }) {
 
     const supabase = await createClient();
     // Step 1: Check if the email already exists
@@ -115,6 +120,21 @@ export async function signUp({ fullname, email, password }: { fullname: string, 
         
         // Step 3: Generate a username
         const username = generateUsername(email);
+        let verifiedReferrer: boolean = false;
+
+        // pay the referrer
+        if (referrer) {
+            const existReferrer = await findExistingUserById(referrer)
+            console.log("referrer exist: " + existReferrer);
+            
+            if (existReferrer) {
+                const ref = await referralReward(referrer, Number(reward))
+                verifiedReferrer = true;
+                console.log("referrered user new balance: "+ref);
+            } else {
+                console.log("user does not exist");
+            }
+        }
 
         // Step 4: Store additional user data in the profiles table
         const { error: profileError } = await supabase
@@ -125,13 +145,15 @@ export async function signUp({ fullname, email, password }: { fullname: string, 
                     fullname,
                     username,
                     email,
-                    password
+                    referrer: (verifiedReferrer ? referrer : null )
                 },
             ]);
 
         if (profileError) {
             throw new Error(profileError.message);
         }
+
+        console.log(referrer, reward);
 
     } catch (error) {
         return {
@@ -189,7 +211,7 @@ export async function exitApp() {
     // redirect('/signup');
 }
 
-export async function updateUser({ fullname, birthday, gender }: { fullname: string, birthday: string, gender: string }) {
+export async function updateUser({ fullname, birthday, gender, eligible, reward }: { fullname: string, birthday: string, gender: string, eligible: boolean, reward: number }) {
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -214,6 +236,10 @@ export async function updateUser({ fullname, birthday, gender }: { fullname: str
         return {
             error: getErrorMessage(error)
         }
+    }
+
+    if (eligible) {
+        await taskCompletionReward(user.id, "profile", reward)
     }
   
     // Redirect to the home page or dashboard

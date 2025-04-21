@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
             gender,
             verified,
             balance,
+            achievement,
             polls: polls (count),
             votes: votes (count)
           `)

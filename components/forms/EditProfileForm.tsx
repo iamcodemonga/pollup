@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import EditProfileButton from '../serverButtons/EditProfileButton';
 import { updateUser } from '@/actions';
+import { tasks } from '@/lib/data/clientMockData';
 
 const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob: string }) => {
     const [ fullname, setFullname ] = useState<string>(name);
@@ -51,6 +52,8 @@ const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob:
             return;
         }
       
+        let first_time: boolean = false;
+
         const selectedDate = new Date(birthday);
         const today = new Date();
         const age = today.getFullYear() - selectedDate.getFullYear();
@@ -65,8 +68,12 @@ const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob:
             })
         }
 
+        if (!gend || !dob) {
+            first_time = true;
+        }
+
         try {
-            const result = await updateUser({ fullname, gender, birthday })
+            const result = await updateUser({ fullname, gender, birthday, eligible: first_time, reward: tasks[1].reward })
             if (result?.error) {
                 toast.error(result.error, {
                     className: "dark:!bg-red-600 dark:!text-white"

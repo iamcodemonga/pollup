@@ -11,24 +11,35 @@ type Props = {
     data: {
         id: string,
         question: string,
+        description: string | null,
         duration: number,
         active: boolean,
         created_at: string,
         creator?: TOwner | null,
+        permission: string,
+        private: string,
+        show_result: string,
+        budget: number,
         options: Array<TOptions>,
         total_votes: number,
+        total_registered_votes: number,
+        total_anonymous_votes: number,
+        expired?: boolean,
         user_has_voted: boolean,
         selected_option_id: string | null
       },
-      bulk: boolean
+      bulk: boolean,
+      user?: string,
 }
 
 type TOwner = {
     id: string,
     dp: string,
+    fullname: string,
     username: string,
     email: string,
     verified: boolean
+    achievement?: Array<string>
 }
 
 type TOptions = {
@@ -37,6 +48,8 @@ type TOptions = {
     image?: string | null,
     votes: Array<string | null>,
     total_votes: number,
+    registered_votes: number,
+    anonymous_votes: number,
     user_voted: boolean
 }
 

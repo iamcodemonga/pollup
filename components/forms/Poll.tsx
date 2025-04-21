@@ -11,13 +11,15 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"
 import CreatePollButton from '../serverButtons/CreatePollButton'
+import { tasks } from '@/lib/data/clientMockData'
 
 type Props = {
     user: string
+    eligible: boolean
 }
 
 
-const Poll = ({ user }: Props) => {
+const Poll = ({ user, eligible }: Props) => {
 
     const optionLimit = 5
     const [ question, setQuestion ] = useState<string>("");
@@ -26,7 +28,7 @@ const Poll = ({ user }: Props) => {
     const [ descCounter, setDescCounter ] = useState<number>(150);
     const [ includeImage, setIncludeImage ] = useState<boolean>(false);
     const [ options, setOptions ] = useState<Array<{image:null, text:string}>>([{ image: null,  text: ""}, { image: null,  text: ""}]);
-    const [ duration, setDuration ] = useState<string>(user ? "180" : "");
+    const [ duration, setDuration ] = useState<string>("");
     const [ advanced, setAdvanced ] = useState<boolean>(false);
     const [ permission, setPermission ] = useState<string>(user ? "users" : "all");
     const [ liveResult, setLiveResult ] = useState<string>("before");
@@ -108,7 +110,7 @@ const Poll = ({ user }: Props) => {
             return;
         }
 
-        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult })
+        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult, eligible: eligible, reward: tasks[3].reward })
         if (result?.error) {
             alert(result?.error)
             return;
@@ -174,7 +176,8 @@ const Poll = ({ user }: Props) => {
                     </div>
                 </button> : null}
             </div>
-            <div id="duration" className={user ? "hidden" : ""}>
+            {/* <div id="duration" className={user ? "hidden" : ""}> */}
+            <div id="duration">
                 <label htmlFor="duration" className='block text-xs text-gray-500 dark:text-gray-300 mb-1 ml-1'>Poll duration(In days)</label>
                 <input type="text" name="duration" id="duration" placeholder='Add duration in days' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={duration} onChange={(e) => handleDuration(e.target.value)} />
             </div>

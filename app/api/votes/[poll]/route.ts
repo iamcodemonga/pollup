@@ -1,3 +1,4 @@
+import { taskCompletionReward } from "@/lib/queries/server";
 import { createClient } from "@/utils/supabase/server";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -21,6 +22,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        // give reward to creator
+        if (searchParams.has("eligible") && searchParams.has("creator") && searchParams.has("reward")) {
+            console.log(`creator has been rewarded ${Number(searchParams.get('reward'))} credits`);
+            await taskCompletionReward(searchParams.get("creator") as string, searchParams.get("eligible") as string, Number(searchParams.get("reward")))
         }
     
     return NextResponse.json(vote)

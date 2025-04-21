@@ -122,3 +122,170 @@ export const getPollById = async(id: string) => {
         total_votes: poll?.options ? poll.options.reduce((sum, option) => sum + (option.votes ? option.votes.length : 0), 0) : 0
     };
 }
+
+// findExistingUserByEmail - email * expecting boolean
+export const findExistingUserByEmail = async(email: string) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+        .from('users')
+        .select(`id, email`)
+        .eq('email', email)
+        .single();
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return !!user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// findExistingUserById - userId * expecting boolean
+export const findExistingUserById = async(userId: string) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+        .from('users')
+        .select(`id, email`)
+        .eq('id', userId)
+        .single();
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return !!user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// getUserByEmail - email
+export const getUserByEmail = async(email: string) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+        .from('users')
+        .select(`*`)
+        .eq('email', email)
+        .single();
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// getUserById - userId
+export const getUserById = async(userId: string, columns: Array<string>) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+        .from('users')
+        .select(columns.join(","))
+        .eq('id', userId)
+        .single();
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// updateUserById - userId, updateInfo
+export const updateUserById = async(userId: string, { fullname, birthday, gender }: { fullname: string, birthday: string, gender: string }) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+            .from('users')
+            .update({ fullname, birthday, gender })
+            .eq('id', userId)
+            .select()
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// updateUserByEmail - email, updateInfo
+export const updateUserByEmail = async(email: string, { fullname, birthday, gender }: { fullname: string, birthday: string, gender: string }) => {
+    const supabase = await createClient();
+    try {
+        const { data: user, error } = await supabase
+            .from('users')
+            .update({ fullname, birthday, gender })
+            .eq('email', email)
+            .select()
+
+        if (error) {
+            throw new Error(error.message)
+        }
+
+        return user;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// rewardUser - creator(user), milestone, reward
+export const taskCompletionReward = async(userId: string, task: string, reward: number) => {
+    const supabase = await createClient();
+    try {
+        const { data, error } = await supabase.rpc('append_task_and_increment_reward', {
+            user_id: userId,
+            new_task: task,
+            reward_increment: reward
+          });
+          
+          if (error) {
+            console.error('Error updating tasks and rewards:', error);
+          } else {
+            console.log('Updated user:', data[0]);
+          }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// referralReward - creator(user), task, reward
+export const referralReward = async(userId: string, reward: number) => {
+    const supabase = await createClient();
+    try {
+        const { data: newBalance, error: rpcError } = await supabase.rpc('balance_increment', { amount: reward, user_id: userId });
+
+        if (rpcError) {
+            throw new Error(rpcError.message);
+        }
+
+        return newBalance;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// getUserPolls - userId
+// getUserVotedPolls - userId

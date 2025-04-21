@@ -6,8 +6,9 @@ import { toast } from 'sonner'
 import { motion } from 'motion/react'
 // import axios from "axios"
 import { useExploreVote, useVote } from '@/hooks/vote'
-// import { ShineBorder } from '../magicui/shine-border'
-// import { ShineBorder } from '../magicui/shine-border'
+import { milestones } from '@/lib/data/clientMockData'
+import { ShineBorder } from '../magicui/shine-border'
+import Link from 'next/link'
 
 type Props = {
     data: {
@@ -19,10 +20,14 @@ type Props = {
         permission: string,
         private: string,
         show_result: string,
+        budget: number,
         created_at: string,
         creator?: TOwner | null,
         options: Array<TOptions>,
         total_votes: number,
+        total_registered_votes: number,
+        total_anonymous_votes: number,
+        expired?: boolean,
         user_has_voted: boolean,
         selected_option_id: string | null
       },
@@ -36,7 +41,8 @@ type TOwner = {
     fullname: string,
     username: string,
     email: string,
-    verified: boolean
+    verified: boolean,
+    achievement?: Array<string>
 }
 
 type TOptions = {
@@ -45,6 +51,8 @@ type TOptions = {
     image?: string | null,
     votes: Array<string | null>,
     total_votes: number,
+    registered_votes: number,
+    anonymous_votes: number,
     user_voted: boolean
 }
 
@@ -56,8 +64,14 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
     const { mutate: pollVote } = useVote(data.id);
     const { mutate: exploreVote } = useExploreVote();
     const [ showResult, setShowResult ] = useState<boolean>(data.show_result == "before" ? true : data.user_has_voted ? true : false)
+    const mileStones = [ 0, 99, 199, 499, 999, 1999, 4999, 9999, 99999 ]
 
     const handleVote = async() => {
+
+        let isReady: boolean = false;
+        let award: string | null = null;
+        let achieved: boolean = false;
+        let token: number = 0;
 
         if (choice?.trim() == null) {
             toast.error("No option was selected!", {
@@ -80,7 +94,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             return;
         }
 
-        if (data.creator?.id == user) {
+        if (user && user == data.creator?.id) {
             toast.error("You can't participate on your poll!", {
                 className: "dark:!bg-red-600 dark:!text-white"
             })
@@ -91,10 +105,19 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             setShowResult(true)
         }
 
+        isReady = mileStones.includes(data.total_registered_votes)
+        if (isReady) {
+            award = `${data.total_registered_votes+1}v`
+            achieved = data.creator?.achievement?.includes(`${data.total_registered_votes+1}v`) as boolean;
+            const index = milestones.findIndex(item => item.type == award)
+            token = milestones[index].reward;
+            console.log(index);
+        }
+
         if (bulk) {
-            exploreVote({ pollId: data.id, optionId: choice });
+            exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token });
         } else {
-            pollVote({ pollId: data.id, optionId: choice })
+            pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token })
             toast.success("You have voted successfully!", {
                 className: "dark:!bg-green-600 dark:!text-white"
             })
@@ -103,7 +126,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
 
     return (
         <div className="relative border dark:border dark:border-foreground/30 bg-[#f3f3f3] dark:bg-[#0c0c0c] rounded-md py-10 lg:py-16 px-2 lg:px-5">
-            {/* <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> */}
+            {data.budget > 0 ? <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> : null}
             <div className='flex w-full justify-end mb-5'>
                 <button type='button' className='w-10 h-10 flex justify-center items-center bg-border dark:bg-[#404040] rounded-full'>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
@@ -117,7 +140,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
                     <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
                 </svg> : null : null}
             </div> : null} */}
-            <h3 className='font-semibold text-2xl lg:text-4xl !leading-snug ml-2'>{data.question}</h3>
+            <Link href={`${process.env.NEXT_PUBLIC_ROOTURL}/poll/${data.id}`} className='font-semibold text-2xl lg:text-4xl !leading-snug ml-2'>{data.question}</Link>
             {data.description ? <p className='text-sm lg:text-base mt-3 lg:mt-3 !leading-snug ml-2 text-foreground/60'>{data.description}</p> : null}
             <RadioGroup className='space-y-5 mt-10 lg:mt-14' value={choice as string} onValueChange={setChoice}>
                 {data.options ? data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>

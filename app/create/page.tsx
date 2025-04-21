@@ -3,6 +3,7 @@ import Footer from "@/components/Footer"
 import PollForm from "@/components/forms/Poll"
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
+import { getUserById } from "@/lib/queries/server";
 
 
 export const metadata: Metadata = {
@@ -17,6 +18,15 @@ const page = async() => {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     console.log("user: "+user?.id);
+    let eligible: boolean = false;
+
+    if (user?.id) {
+      const details = await getUserById(user.id, ["achievement"]) as unknown as { achievement: string[] }
+      
+      if (details.achievement.includes("poll") == false) {
+        eligible = true;
+      }
+    }
 
     return (
         <div className="px-1 lg:px-20">
@@ -29,7 +39,7 @@ const page = async() => {
                     </div>
                 </div>
                 <div className="w-full flex justify-center mt-5">
-                    <PollForm user={user?.id as string} />
+                    <PollForm user={user?.id as string} eligible={eligible} />
                 </div>
             </section>
             <Footer />

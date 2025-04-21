@@ -16,10 +16,13 @@ type Props = {
     permission: string,
     private: string,
     show_result: string,
+    budget: number,
     created_at: string,
     creator?: TOwner | null,
     options: Array<TOptions>,
     total_votes: number,
+    total_registered_votes: number,
+    total_anonymous_votes: number,
     user_has_voted: boolean,
     selected_option_id: string | null
 }
@@ -30,7 +33,8 @@ type TOwner = {
     username: string,
     fullname: string,
     email: string,
-    verified: boolean
+    verified: boolean,
+    achievement: Array<string>
 }
 
 type TOptions = {
@@ -39,6 +43,8 @@ type TOptions = {
     image?: string | null,
     votes: Array<string | null>,
     total_votes: number,
+    registered_votes: number,
+    anonymous_votes: number,
     user_voted: boolean
 }
 

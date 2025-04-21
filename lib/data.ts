@@ -1,5 +1,3 @@
-// "use client"
-
 export const timeline = [
     {
         id: "1",
@@ -93,11 +91,11 @@ export const JoinReason = [
 export const QA = [
     {
         question: "Is Reapoll free to use?",
-        answer: "Yes, Reappoll is free for both voters and poll creators. Some advanced features for creators may require a paid plan."
+        answer: "Yes, Reappoll is free for both voters and poll creators. Some advanced features for creators may require a pro plan."
     },
     {
         question: "How do I earn rewards on Reappoll?",
-        answer: "You earn rewards by voting on polls. Each vote earns you points, which can be redeemed for cash, gift cards, or exclusive perks."
+        answer: "You earn rewards by voting on polls. Each vote earns you credits, which can be redeemed for cash or exclusive perks."
     },
     {
         question: "Can I see who voted on my poll?",
@@ -166,24 +164,24 @@ export const tasks = [
         reward: 10000,
         completed: false
     },
+    // { 
+    //     id: "3",
+    //     type: "video",
+    //     title: "Watch Video",
+    //     description: "Get familiar with Reappoll by watching a quick introductory video.",
+    //     reward: 10000,
+    //     completed: false
+    // },
     { 
         id: "3",
-        type: "video",
-        title: "Watch Video",
-        description: "Get familiar with Reappoll by watching a quick introductory video.",
-        reward: 10000,
-        completed: false
-    },
-    { 
-        id: "4",
         type: "poll",
-        title: "Create a Poll",
+        title: "Create your first poll",
         description: "Craft your poll, gather opinions and get realtime results from real people.",
         reward: 10000,
         completed: false
     },
     { 
-        id: "5",
+        id: "4",
         type: "referral",
         title: "Refer a friend",
         description: "Invite friends and get rewarded for every successful referral.",
@@ -195,7 +193,7 @@ export const tasks = [
 export const milestones = [
     { 
         id: "1",
-        type: "milestone",
+        type: "100v",
         title: "Get 100 Votes",
         description: "Gather 100 votes from active registered users on any of your polls.",
         reward: 10000,
@@ -203,7 +201,7 @@ export const milestones = [
     },
     { 
         id: "2",
-        type: "milestone",
+        type: "200v",
         title: "Get 200 Votes",
         description: "Gather 200 votes from active registered users on any of your polls.",
         reward: 10000,
@@ -211,7 +209,7 @@ export const milestones = [
     },
     { 
         id: "3",
-        type: "milestone",
+        type: "500v",
         title: "Get 500 Votes",
         description: "Gather 500 votes from active registered users on any of your polls.",
         reward: 10000,
@@ -219,42 +217,42 @@ export const milestones = [
     },
     { 
         id: "4",
-        type: "milestone",
+        type: "1000v",
         title: "Get 1,000 Votes",
         description: "Gather 1,000 votes from active registered users on any of your polls.",
-        reward: 10000,
+        reward: 20000,
         completed: false
     },
     { 
         id: "5",
-        type: "milestone",
+        type: "2000v",
         title: "Get 2,000 Votes",
         description: "Gather 2,000 votes from active registered users on any of your polls.",
-        reward: 10000,
+        reward: 20000,
         completed: false
     },
     { 
         id: "6",
-        type: "milestone",
+        type: "5000v",
         title: "Get 5,000 Votes",
         description: "Gather 5,000 votes from active registered users on any of your polls.",
-        reward: 10000,
+        reward: 20000,
         completed: false
     },
     { 
         id: "7",
-        type: "milestone",
+        type: "10000v",
         title: "Get 10,000 Votes",
         description: "Gather 10,000 votes from active registered users on any of your polls.",
-        reward: 10000,
+        reward: 50000,
         completed: false
     },
     { 
         id: "8",
-        type: "milestone",
+        type: "100000v",
         title: "Get 100,000 Votes",
         description: "Gather 100,000 votes from active registered users on any of your polls.",
-        reward: 10000,
+        reward: 100000,
         completed: false
     },
 ]

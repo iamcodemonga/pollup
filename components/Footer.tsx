@@ -6,11 +6,11 @@ const Footer = () => {
         <div className="lg:flex justify-between items-start py-20 lg:py-52 mt-5 lg:px-20 space-y-16 lg:space-y-0">
             <div className="space-y-4 lg:space-y-10">
                 <Link href={"/"} className="block text-center">Home</Link>
-                <Link href={"/"} className="block text-center">Contact</Link>
-                <Link href={"/"} className="block text-center">Join Us</Link>
+                <a href={"mailto:thereapoll@gmail.com"} target='_blank' className="block text-center">Contact</a>
+                <Link href={"/signup"} className="block text-center">Join Us</Link>
             </div>
             <div className="space-y-4 lg:space-y-10">
-                <Link href={"/"} className="block text-center">Twitter</Link>
+                <a href={"https://x.com/reapoll_"} target='_blank' className="block text-center">Twitter</a>
                 <Link href={"/"} className="block text-center">Discord</Link>
                 <Link href={"/"} className="block text-center">LinkedIn</Link>
             </div>

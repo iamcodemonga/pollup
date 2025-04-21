@@ -83,52 +83,52 @@ export default async function Home() {
                 <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="capitalize text-base font-bol text-foreground/70 text-center px-5">Trusted by over <strong className="text-primary">300K</strong> users worldwide</h3>
+            <h3 className="capitalize text-base font-bol text-foreground/70 text-center px-5">Trusted by over <strong className="text-primary">2,000+</strong> users worldwide</h3>
             <div className="hidden lg:flex space-x-8 items-center mt-10">
               <div>
                 <h2 className="text-center text-5xl font-bold text-primary">
-                  <NumberTicker value={300} className="!text-primary" style={{letterSpacing: .5}} />K+
+                  <NumberTicker value={2000} className="!text-primary" style={{letterSpacing: .5}} />+
                 </h2>
                 <p className="text-center text-sm text-foreground/80">Users</p>
               </div>
               <Separator orientation="vertical" className="h-36" />
               <div>
                 <h2 className="text-center text-5xl font-bold text-primary">
-                  <NumberTicker value={100} className="!text-primary" style={{letterSpacing: .5}} />K+
+                  <NumberTicker value={5000} className="!text-primary" style={{letterSpacing: .5}} />+
                 </h2>
                 <p className="text-center text-sm text-foreground/80">Polls</p>
               </div>
               <Separator orientation="vertical" />
               <div>
                 <h2 className="text-center text-5xl font-bold text-primary">
-                  <NumberTicker  value={150} className="!text-primary" style={{letterSpacing: .5}} />M+
+                  <NumberTicker  value={30} className="!text-primary" style={{letterSpacing: .5}} />K+
                 </h2>
                 <p className="text-center text-sm text-foreground/80">Votes</p>
               </div>
               <Separator orientation="vertical" className="h-36" />
               <div>
-                <h2 className="text-center text-5xl font-bold text-primary">$<NumberTicker value={600} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
+                <h2 className="text-center text-5xl font-bold text-primary">$<NumberTicker value={10} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
                 <p className="text-center text-sm text-foreground/80">Reaped Rewards</p>
               </div>
             </div>
             <div className="lg:hidden space-y-4 mt-10">
               <div>
-                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker value={300} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
+                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker value={2000} className="!text-primary" style={{letterSpacing: .5}} />+</h2>
                 <p className="text-center text-sm text-foreground/80">Users</p>
               </div>
               <Separator orientation="horizontal" className="w-60" />
               <div>
-                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker value={100} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
+                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker value={5000} className="!text-primary" style={{letterSpacing: .5}} />+</h2>
                 <p className="text-center text-sm text-foreground/80">Polls</p>
               </div>
               <Separator orientation="horizontal" />
               <div>
-                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker  value={150} className="!text-primary" style={{letterSpacing: .5}} />M+</h2>
+                <h2 className="text-center text-3xl font-bold text-primary"><NumberTicker  value={30} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
                 <p className="text-center text-sm text-foreground/80">Votes</p>
               </div>
               <Separator orientation="horizontal" />
               <div>
-                <h2 className="text-center text-3xl font-bold text-primary">$<NumberTicker value={600} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
+                <h2 className="text-center text-3xl font-bold text-primary">$<NumberTicker value={10} className="!text-primary" style={{letterSpacing: .5}} />K+</h2>
                 <p className="text-center text-sm text-foreground/80">Reaped Rewards</p>
               </div>
             </div>

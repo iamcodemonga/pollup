@@ -27,13 +27,15 @@ export async function GET(request: NextRequest) {
             show_result,
             permission,
             created_at,
+            budget,
             creator:users!creator (
               id,
               dp,
               fullname,
               username,
               email,
-              verified
+              verified,
+              achievement
             ),
             options:options!poll (
               id,
@@ -71,17 +73,23 @@ export async function GET(request: NextRequest) {
         // Calculate total votes for each option and overall
         const optionsWithVotes = sortedOptions.map((option) => {
             const total_votes = option.votes.length;
+            const registered_votes = option.votes.filter(vote => vote.voter !== null).length;
+            const anonymous_votes = option.votes.length - registered_votes;
             const user_voted = option.votes.some(
             (vote) => vote.voter === user?.id || vote.IP === IP
             );
             return {
             ...option,
             total_votes,
+            registered_votes,
+            anonymous_votes,
             user_voted,
             };
         });
 
         const total_votes = optionsWithVotes.reduce((sum, option) => sum + option.total_votes, 0);
+        const total_registered_votes = optionsWithVotes.reduce((sum, option) => sum + option.registered_votes, 0);
+        const total_anonymous_votes = total_votes - total_registered_votes;
 
         // Check if the user has voted on this poll
         const userVote = optionsWithVotes.find((option) => option.user_voted);
@@ -92,6 +100,8 @@ export async function GET(request: NextRequest) {
           creator: poll.creator,
           options: optionsWithVotes,
           total_votes,
+          total_registered_votes,
+          total_anonymous_votes,
           user_has_voted: !!userVote,
           selected_option_id,
         };
