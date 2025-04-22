@@ -141,7 +141,7 @@ const Poll = ({ user, eligible }: Props) => {
             <div id="options">
                 <div className="w-full flex justify-between items-center mb-1 ml-1">
                     <label htmlFor="" className='block text-xs text-gray-500 dark:text-gray-300'>Answer Options</label>
-                    <div className="flex items-center space-x-2 hidden">
+                    <div className="items-center space-x-2 hidden">
                         <input type="checkbox" name="include-image" id="include-image" checked={includeImage} className='border-2' onChange={handleIncludeImage} />
                         <label htmlFor="include-image" className='block text-xs text-gray-500 dark:text-gray-300'>Include image</label>
                     </div>

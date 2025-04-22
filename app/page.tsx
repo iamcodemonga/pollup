@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { NumberTicker } from "@/components/magicui/number-ticker";
 import Navbar from "@/components/Navbar";
-// import SingleChoice from "@/components/polls/SingleChoice";
 import { TwitterTestimonials } from "@/components/TwitterTestimonials";
 import {
   Accordion,
@@ -36,7 +35,7 @@ export const metadata = {
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();  
 
   return (
     <div className="w-full">

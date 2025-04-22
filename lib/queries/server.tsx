@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import countries from 'i18n-iso-countries';
+import { countryToContinent } from "../countryToContinent";
 
 export const getAllActivePolls = async() => {
     const supabase = await createClient();
@@ -285,6 +287,19 @@ export const referralReward = async(userId: string, reward: number) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+export async function registerCountryLocales() {
+    const localeModule = await import("i18n-iso-countries/langs/en.json");
+    countries.registerLocale(localeModule.default);
+    return countries;
+}
+
+export const getIPInfo = async(countryCode: string, city: string, region: string) => {
+    const countries = await registerCountryLocales();
+    const countryName = countries.getName(countryCode.toUpperCase(), "en") || 'Unknown';
+    const continentName = countryToContinent[countryCode.toUpperCase()] || 'Unknown';
+    return { continent: continentName, country: countryName, country_code: countryCode, region, city }
 }
 
 // getUserPolls - userId
