@@ -37,11 +37,12 @@ interface InfinitePollsData {
   pageParams: number[]; // Array of page parameters (e.g., page numbers)
 }
 
-export const vote = async ({ pollId, optionId, eligible, creator, reward }: { pollId: string; optionId: string; eligible?: string | null, creator?: string | null, reward?: number }) => {
+export const vote = async ({ pollId, optionId, eligible, creator, reward, sponsored }: { pollId: string; optionId: string; eligible?: string | null, creator?: string | null, reward?: number, sponsored?: number }) => {
     const award = eligible ? `&eligible=${eligible}` : "";
     const user = creator ? `&creator=${creator}` : "";
     const point = reward ? `&reward=${reward}` : "";
-    const { data: result } = await axios.post(`${process.env.NEXT_PUBLIC_ROOTURL}/api/votes/${pollId}?choice=${optionId}${award}${user}${point}`);
+    const earn = (sponsored as number) > 0 ? `&sponsored=${sponsored}` : "";
+    const { data: result } = await axios.post(`${process.env.NEXT_PUBLIC_ROOTURL}/api/votes/${pollId}?choice=${optionId}${award}${user}${point}${earn}`);
     
     return result;
 };

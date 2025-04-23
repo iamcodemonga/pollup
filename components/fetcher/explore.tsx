@@ -17,6 +17,7 @@ type Props = {
     private: string,
     show_result: string,
     budget: number,
+    credit_per_vote: number,
     created_at: string,
     creator?: TOwner | null,
     options: Array<TOptions>,

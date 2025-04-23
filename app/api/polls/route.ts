@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
             permission,
             created_at,
             budget,
+            credit_per_vote,
             creator:users!creator (
               id,
               dp,

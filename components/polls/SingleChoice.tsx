@@ -21,6 +21,7 @@ type Props = {
         private: string,
         show_result: string,
         budget: number,
+        credit_per_vote: number,
         created_at: string,
         creator?: TOwner | null,
         options: Array<TOptions>,
@@ -72,6 +73,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
         let award: string | null = null;
         let achieved: boolean = false;
         let token: number = 0;
+        let sponsored: number = 0;
 
         if (choice?.trim() == null) {
             toast.error("No option was selected!", {
@@ -101,6 +103,10 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             return;
         }
 
+        if ((data.budget - data.credit_per_vote) > 0) {
+            sponsored = data.credit_per_vote
+        }
+
         if (!showResult) {
             setShowResult(true)
         }
@@ -115,12 +121,23 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
         }
 
         if (bulk) {
-            exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token });
+            exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token, sponsored });
+            if (sponsored > 0) {
+                toast.success(`You just earned ${sponsored} credit!`, {
+                    className: "dark:!bg-green-600 dark:!text-white"
+                })
+            }
         } else {
-            pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token })
-            toast.success("You have voted successfully!", {
-                className: "dark:!bg-green-600 dark:!text-white"
-            })
+            pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token, sponsored })
+            if (sponsored > 0) {
+                toast.success(`You just earned ${sponsored} credit!`, {
+                    className: "dark:!bg-green-600 dark:!text-white"
+                })
+            } else {
+                toast.success("You have voted successfully!", {
+                    className: "dark:!bg-green-600 dark:!text-white"
+                })
+            }
         }
     }
 

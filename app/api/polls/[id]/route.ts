@@ -26,6 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             show_result,
             permission,
             budget,
+            credit_per_vote,
             created_at,
             creator:users!creator (
                 id,

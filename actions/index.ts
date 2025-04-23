@@ -33,7 +33,7 @@ const generateUsername = (email: string) => {
     return `${baseUsername}${randomSuffix}`;
 };
 
-export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number }) {
+export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number }) {
     let id: string | undefined;
 
     // Calculate expires_at by adding duration (in days) to the current timestamp
@@ -47,7 +47,7 @@ export async function addPoll({ question, description, duration, options, permis
         const { data: pollData, error: pollError } = await supabase
             .from('polls')
             .insert([
-                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null) }
+                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote }
             ])
             .select()
 
@@ -68,6 +68,15 @@ export async function addPoll({ question, description, duration, options, permis
                 console.log(OptionError);
                 throw new Error("Network error!");
             }
+        }
+
+        if (user?.id && budget > 0 && credit_per_vote > 0) {
+            const { data: newBalance, error: rpcError } = await supabase.rpc('balance_decrement', { amount: budget, user_id: user.id });
+        
+            if (rpcError) {
+                throw new Error(rpcError.message);
+            }
+            console.log(newBalance);
         }
 
         if (user?.id && eligible) {

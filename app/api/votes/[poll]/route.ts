@@ -1,4 +1,4 @@
-import { getIPInfo, taskCompletionReward } from "@/lib/queries/server";
+import { getIPInfo, rewardVoter, taskCompletionReward } from "@/lib/queries/server";
 import { redis } from "@/lib/redis";
 import { createClient } from "@/utils/supabase/server";
 import axios from "axios";
@@ -37,6 +37,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        // give reward to voter
+        if (user?.id && searchParams.has("sponsored") && Number(searchParams.get("sponsored")) > 0) {
+            await rewardVoter(poll, user?.id, Number(searchParams.get("sponsored")))
         }
 
         // give reward to creator

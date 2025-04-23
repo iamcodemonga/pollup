@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { Switch } from '../ui/switch'
 import { addPoll } from '@/actions'
 import { toast } from 'sonner'
@@ -16,10 +16,11 @@ import { tasks } from '@/lib/data/clientMockData'
 type Props = {
     user: string
     eligible: boolean
+    balance?: number
 }
 
 
-const Poll = ({ user, eligible }: Props) => {
+const Poll = ({ user, eligible, balance }: Props) => {
 
     const optionLimit = 5
     const [ question, setQuestion ] = useState<string>("");
@@ -34,6 +35,76 @@ const Poll = ({ user, eligible }: Props) => {
     const [ liveResult, setLiveResult ] = useState<string>("before");
     const [ privacy, setPrivacy ] = useState<boolean>(false);
     const [ sponsored, setSponsored ] = useState<boolean>(false);
+    const [budget, setBudget] = useState<number>(10000);
+    const [creditsPerFan, setCreditsPerFan] = useState<number>(100);
+    const [error, setError] = useState<string>('');
+    const [distribution, setDistribution] = useState<{
+        totalFans: number;
+        totalDistributed: number;
+        leftoverCredits: number;
+    } | null>(null);
+
+    useEffect(() => {
+        validateAndCalculate();
+      }, [budget, creditsPerFan]);
+
+    const validateAndCalculate = () => {
+        setError('');
+        const errors: string[] = [];
+
+        if ((balance as number) < budget) {
+            errors.push("You don't have enough credit!");
+        }
+    
+        if (Number(budget) < 10000) {
+            errors.push('Minimum budget is 10,000 credits');
+            // toast.error("Minimum budget is 10,000 credits!", {
+            //     className: "dark:!bg-red-600 dark:!text-white"
+            // })
+            // return;
+        }
+
+        if (!Number.isInteger(budget)) {
+            errors.push('Budget must be a whole number');
+            // toast.error("Budget must be a whole number!", {
+            //     className: "dark:!bg-red-600 dark:!text-white"
+            // })
+            // return;
+        }
+
+        if (Number(creditsPerFan) < 100) {
+            errors.push('Minimum of 100 credits per vote');
+        }
+
+        if (!Number.isInteger(creditsPerFan)) {
+            errors.push('Credits per vote must be a whole number');
+            // toast.error("Credits per fan must be a whole number!", {
+            //     className: "dark:!bg-red-600 dark:!text-white"
+            // })
+            return;
+        }
+        
+        const maxAllowedPerFan = Number(budget) / 100;
+        if (Number(creditsPerFan) > maxAllowedPerFan && maxAllowedPerFan >= 100) {
+            errors.push(`Maximum allowed credits per vote: ${Math.floor(maxAllowedPerFan)}`);
+        }
+    
+        if (errors.length > 0) {
+          setError(errors.join(' • '));
+          setDistribution(null);
+          return;
+        }
+    
+        const totalFans = Math.floor(Number(budget) / Number(creditsPerFan));
+        const totalDistributed = Number(creditsPerFan) * totalFans;
+        const leftoverCredits = Number(budget) - totalDistributed;
+    
+        setDistribution({
+          totalFans,
+          totalDistributed,
+          leftoverCredits
+        });
+      };
 
     const handleQuestion = (text: string) => {
         if (text.length > 70) {
@@ -70,6 +141,22 @@ const Poll = ({ user, eligible }: Props) => {
         return;
     }
 
+    const handleSetBudget = (money: string) => {
+        if (Number(money) || Number(money) == 0) {
+            setBudget(Number(money))
+            return;
+        }
+        return;
+    }
+
+    const handleSetCreditPerVote = (money: string) => {
+        if (Number(money) || Number(money) == 0) {
+            setCreditsPerFan(Number(money))
+            return;
+        }
+        return;
+    }
+
     const addOption = () => {
         if (options.length >= optionLimit) {
             return;
@@ -89,6 +176,7 @@ const Poll = ({ user, eligible }: Props) => {
 
     const handleSubmit = async(e: FormEvent) => {
         e.preventDefault()
+
         if (question.trim() == "") {
             toast.error("Write a poll question!", {
                 className: "dark:!bg-red-600 dark:!text-white"
@@ -110,7 +198,14 @@ const Poll = ({ user, eligible }: Props) => {
             return;
         }
 
-        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult, eligible: eligible, reward: tasks[3].reward })
+        if (sponsored && error) {
+            toast.error(error.split(' • ')[0], {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return;
+        }
+
+        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult, eligible: eligible, reward: tasks[3].reward, budget: (sponsored ? budget : 0), credit_per_vote: (sponsored ? creditsPerFan : 0) })
         if (result?.error) {
             alert(result?.error)
             return;
@@ -241,7 +336,7 @@ const Poll = ({ user, eligible }: Props) => {
                         <option value="after">After voting</option>
                     </select>
                 </div>
-                <div className="w-full flex justify-between items-center mb-5 px-3 bg-gray-200 dark:bg-muted py-5 rounded-lg">
+                <div className="w-full flex justify-between items-center mb-5 px-3 bg-gray-200 dark:bg-muted py-5 rounded-lg privacy">
                     <div className='flex items-center space-x-1'>
                         <label htmlFor="private">Private</label>
                         <TooltipProvider>
@@ -261,35 +356,12 @@ const Poll = ({ user, eligible }: Props) => {
                     </div>
                     <Switch id="private" checked={privacy} onCheckedChange={setPrivacy} />
                 </div>
-                <div className="mb-5 hidden bg-gray-200 dark:bg-muted rounded-lg">
+                <div className={`mb-5 bg-gray-200 dark:bg-muted rounded-lg sponsorship ${user ? "" : "hidden"}`}>
                     <div className="w-full flex justify-between items-center mb-2 px-3 py-5">
-                        <label htmlFor="sponsored">Sponsored</label>
+                        <label htmlFor="sponsored">Sponsorship</label>
                         <Switch id="sponsored" checked={sponsored} onCheckedChange={setSponsored}  />
                     </div>
-                    <div className={`${sponsored ? "px-3 pb-7 space-y-5" : "hidden"}`}>
-                        <div>
-                            <div className='mb-1 flex items-center space-x-1'>
-                                <label htmlFor="pattern" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Type</label>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <button type='button'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 text-gray-500 dark:text-gray-500">
-                                                    <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </TooltipTrigger>
-                                        <TooltipContent className='bg-foreground w-80'>
-                                            <p className='mb-2 text-background'>The type of sponsorship!</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            <select name="pattern" id="pattern" value={"early"} className='px-2 lg:py-[10px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' onChange={() => {}}>
-                                <option value="early">Early birds</option>
-                                <option value="share">Fair share</option>
-                            </select>
-                        </div>
+                    <div className={`${sponsored ? "px-3 pb-8 space-y-5" : "hidden"}`}>
                         <div>
                             <div className='mb-1 flex items-center space-x-1'>
                                 <label htmlFor="budget" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Budget</label>
@@ -308,7 +380,7 @@ const Poll = ({ user, eligible }: Props) => {
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <input type="text" name="budget" id="budget" placeholder='Add Budget' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={""} onChange={() => {}} />
+                            <input type="text" name="budget" id="budget" placeholder='Add Budget' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' min="10000" step="10" value={budget} onChange={(e) => handleSetBudget(e.target.value)} />
                         </div>
                         <div>
                             <div className='mb-1 flex items-center space-x-1'>
@@ -328,8 +400,52 @@ const Poll = ({ user, eligible }: Props) => {
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <input type="text" name="reward" id="reward" placeholder='Reward per voter' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={""} onChange={() => {}} />
+                            <input type="text" name="reward" id="reward" placeholder='Reward per voter' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' min="100" step="10" value={creditsPerFan} onChange={(e) => handleSetCreditPerVote(e.target.value)} />
                         </div>
+                        {error && (
+                            <div className="p-3 bg-red-600 text-white dar:bg-red-50 dar:text-red-700 rounded-md text-sm space-y-2">
+                                {error.split(' • ').map((msg, i) => (
+                                <p key={i}>⚠️ {msg}</p>
+                                ))}
+                            </div>
+                        )}
+                        {distribution && (
+                            <div className="p-4 bg-green-400/30 dark:bg-green-100 rounded-md">
+                                <h3 className="text-sm font-semibold text-blue-800 mb-3">Distribution Plan</h3>
+                                
+                                <div className="space-y-2">
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-700">Expected Reapers(Earners):</span>
+                                        <span className="ml-2 text-lg font-bold text-blue-600">
+                                        {distribution.totalFans.toLocaleString()}
+                                        </span>
+                                    </div>
+                                
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-700">Total Distributed:</span>
+                                        <span className="ml-2 text-lg font-bold text-green-600">
+                                        {distribution.totalDistributed.toLocaleString()} credits
+                                        </span>
+                                    </div>
+
+                                    {distribution.leftoverCredits > 0 && (
+                                        <div className="bg-yellow-50 p-2 rounded-md">
+                                        <span className="text-sm font-medium text-yellow-700">Leftover Credits:</span>
+                                        <span className="ml-2 text-lg font-bold text-yellow-600">
+                                            {distribution.leftoverCredits.toLocaleString()} credits
+                                        </span>
+                                        <p className="text-xs mt-1 text-yellow-700">
+                                            Consider adjusting amounts to use all credits
+                                        </p>
+                                        </div>
+                                    )}
+
+                                    <p className="text-xs text-blue-700 mt-2">
+                                        💡 Must benefit at least 100 participants with minimum 100 credits each
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

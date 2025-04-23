@@ -272,6 +272,26 @@ export const taskCompletionReward = async(userId: string, task: string, reward: 
     }
 }
 
+// rewardUser - creator(user), milestone, reward
+export const rewardVoter = async(poll_id: string, voter_id: string, amount: number) => {
+    const supabase = await createClient();
+    try {
+        const { data, error } = await supabase.rpc('transfer_reward', {
+            poll_id,
+            voter_id,
+            amount
+          });
+          
+          if (error) {
+            console.error('Error rewarding user:', error);
+          } 
+          return data;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // referralReward - creator(user), task, reward
 export const referralReward = async(userId: string, reward: number) => {
     const supabase = await createClient();

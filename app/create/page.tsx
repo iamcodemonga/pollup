@@ -19,14 +19,18 @@ const page = async() => {
     const { data: { user } } = await supabase.auth.getUser();
     console.log("user: "+user?.id);
     let eligible: boolean = false;
+    let details;
 
     if (user?.id) {
-      const details = await getUserById(user.id, ["achievement"]) as unknown as { achievement: string[] }
+      details = await getUserById(user.id, ["achievement", "balance"]) as unknown as { achievement: string[], balance: number }
       
       if (details.achievement.includes("poll") == false) {
         eligible = true;
       }
     }
+
+    console.log("details: "+details);
+    
 
     return (
         <div className="px-1 lg:px-20">
@@ -39,7 +43,7 @@ const page = async() => {
                     </div>
                 </div>
                 <div className="w-full flex justify-center mt-5">
-                    <PollForm user={user?.id as string} eligible={eligible} />
+                    <PollForm user={user?.id as string} eligible={eligible} balance={details?.balance} />
                 </div>
             </section>
             <Footer />

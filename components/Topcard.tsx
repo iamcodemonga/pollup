@@ -17,7 +17,7 @@ const TopCard = ({ label, value, children, money, index }: Props) => {
             <div className='w-full lg:w-max flex justify-center'>
                 <div className='space-y-1'>
                     <p className={`text-xs ${index==0 ? "text-slate-300 text-center lg:text-left" :"text-primary dark:text-primary text-center lg:text-left"}`}>{label}</p>
-                    <h4 className={`text-sm lg:text-xl text-center lg:text-left lg:ml-2 ${index==0 ? "text-white lg:!ml-0" :""}`}>{money ? `${value.toLocaleString()} PT` : value}</h4>
+                    <h4 className={`text-sm lg:text-xl text-center lg:text-left lg:ml-2 ${index==0 ? "text-white lg:!ml-0" :""}`}>{money ? `${value.toLocaleString()}` : value}</h4>
                 </div>
             </div>
         </div>
