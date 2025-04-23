@@ -103,7 +103,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             return;
         }
 
-        if ((data.budget - data.credit_per_vote) > 0) {
+        if (user && (data.budget - data.credit_per_vote) > 0) {
             sponsored = data.credit_per_vote
         }
 
@@ -122,7 +122,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
 
         if (bulk) {
             exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token, sponsored });
-            if (sponsored > 0) {
+            if (user && sponsored > 0) {
                 toast.success(`You just earned ${sponsored} credit!`, {
                     className: "dark:!bg-green-600 dark:!text-white"
                 })
@@ -130,9 +130,11 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
         } else {
             pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token, sponsored })
             if (sponsored > 0) {
-                toast.success(`You just earned ${sponsored} credit!`, {
-                    className: "dark:!bg-green-600 dark:!text-white"
-                })
+                if (user) {
+                    toast.success(`You just earned ${sponsored} credit!`, {
+                        className: "dark:!bg-green-600 dark:!text-white"
+                    })
+                }
             } else {
                 toast.success("You have voted successfully!", {
                     className: "dark:!bg-green-600 dark:!text-white"
