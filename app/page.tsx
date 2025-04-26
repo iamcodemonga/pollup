@@ -16,8 +16,8 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 export const metadata = {
-  title: `Create & Participate in Polls, Earn massive Rewards | ${process.env.BRANDNAME}`,
-  description: 'Create free polls or vote on trending topics to earn redeemable massive rewards.',
+  title: `Validate your product, content and ideas with ${process.env.BRANDNAME}`,
+  description: 'Create polls and get useful feedback for your product, content and ideas from real people worldwide.',
   alternates: {
     canonical: '/'
   },
@@ -27,7 +27,7 @@ export const metadata = {
         url: `${process.env.ROOTURL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'reapoll - Vote and reap',
+        alt: 'reapoll - Validate everything',
       }
     ]
   }
