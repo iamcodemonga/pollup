@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
             )
           `)
         .eq("private", false)
-        .neq("id", "a2c4ac82-1b54-4734-bf37-91e1201e78a0")
+        .neq("id", process.env.SPECIAL_POLL)
         .not("creator", "is", null) // Ensure creator is not null
         .gt('expires_at', new Date().toISOString()) // Filter non-expired polls
         .range(offset, offset + limit - 1) // Paginate results
