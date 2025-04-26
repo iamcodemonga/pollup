@@ -1,10 +1,10 @@
 import React from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ChangePasswordForm from '@/components/forms/ChangePasswordForm'
 import EditProfileForm from '@/components/forms/EditProfileForm'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import DashboardTopBar from '@/components/dashboard/DashboardTopBar'
+import DPUpload from '@/components/dashboard/DPUpload'
 
 const page = async() => {
 
@@ -17,7 +17,7 @@ const page = async() => {
 
     const { data, error } = await supabase
         .from("users")
-        .select("fullname, gender, birthday")
+        .select("fullname, gender, birthday, dp")
         .eq("id", user.id)
         .single()
 
@@ -30,23 +30,7 @@ const page = async() => {
             <section className='py-0 lg:pr-0 lg:pl-3 pt-0'>
                 <DashboardTopBar user={user.id} />
                 <div className='grid grid-cols-12 gap-x-5 gap-y-7 mr-2 lg:mr-2'>
-                    <form className='col-span-12 lg:col-span-12 border rounded-lg py-16 space-y-8' action="" method="post">
-                        <h3 className="text-center lg:font-bold text-xl px-3">Profile Photo/Logo</h3>
-                        <div className='w-full flex justify-center'>
-                            <Avatar className='flex flex-col justify-center items-center w-28 h-28 lg:w-36 lg:h-36'>
-                                <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhslR_IBbWqq6aKDwSybRj5I7kZnEI5Rhd_g&s" className='object-cover' />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                        </div>
-                        <div className='flex items-center justify-center space-x-3 w-full'>
-                            <div className=''>
-                                <label htmlFor="logofile" className='bg-muted py-[10px] px-5 rounded-md text-sm'>Select Image</label>
-                                <input type="file" name="" id="logofile" className='hidden' />
-                            </div>
-                            <button type="submit" className='bg-primary py-2 px-5 text-black rounded-md text-sm'>Submit</button>
-                        </div>
-                        <p className="text-center text-slate-400 text-sm">Allowed JPG, PNG, JPEG. Max size of 1MB</p>
-                    </form>
+                    <DPUpload abbr={data?.fullname.substring(0, 2)} userid={user.id} dp={data?.dp} />
                     <form className='hidden col-span-12 lg:col-span-7 border rounded-lg py-12 lg:py-16 px-4 lg:px-16 space-y-6' action="" method="post">
                         <div className='space-y-2'>
                             <h3 className="lg:font-bold text-xl">Business details</h3>

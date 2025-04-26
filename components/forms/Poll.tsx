@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Switch } from '../ui/switch'
 import { addPoll } from '@/actions'
 import { toast } from 'sonner'
@@ -25,17 +25,24 @@ const Poll = ({ user, eligible, balance }: Props) => {
     const optionLimit = 5
     const [ question, setQuestion ] = useState<string>("");
     const [ titleCounter, setTitleCounter ] = useState<number>(70);
+    const [ addDescription, setAddDescription ] = useState<boolean>(false);
     const [ description, setDescription ] = useState<string>("");
     const [ descCounter, setDescCounter ] = useState<number>(150);
     const [ includeImage, setIncludeImage ] = useState<boolean>(false);
     const [ options, setOptions ] = useState<Array<{image:null, text:string}>>([{ image: null,  text: ""}, { image: null,  text: ""}]);
-    const [ duration, setDuration ] = useState<string>("");
+    const [ duration, setDuration ] = useState<string>("3");
     const [ advanced, setAdvanced ] = useState<boolean>(false);
     const [ permission, setPermission ] = useState<string>(user ? "users" : "all");
     const [ liveResult, setLiveResult ] = useState<string>("before");
     const [ privacy, setPrivacy ] = useState<boolean>(false);
     const [ sponsored, setSponsored ] = useState<boolean>(false);
     const [budget, setBudget] = useState<number>(10000);
+
+    const [ visual, setVisual ] = useState<boolean>(false)
+    const [ mediaType, setMediaType ] = useState<string>("youtube");
+    const [ mediaFile, setMediaFile ] = useState<File | null>(null)
+    const [ youtube, setYoutube ] = useState<string>("")
+
     const [creditsPerFan, setCreditsPerFan] = useState<number>(100);
     const [error, setError] = useState<string>('');
     const [distribution, setDistribution] = useState<{
@@ -43,6 +50,8 @@ const Poll = ({ user, eligible, balance }: Props) => {
         totalDistributed: number;
         leftoverCredits: number;
     } | null>(null);
+    const MAX_SIZE_MB = 10;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
     useEffect(() => {
         validateAndCalculate();
@@ -58,18 +67,10 @@ const Poll = ({ user, eligible, balance }: Props) => {
     
         if (Number(budget) < 10000) {
             errors.push('Minimum budget is 10,000 credits');
-            // toast.error("Minimum budget is 10,000 credits!", {
-            //     className: "dark:!bg-red-600 dark:!text-white"
-            // })
-            // return;
         }
 
         if (!Number.isInteger(budget)) {
             errors.push('Budget must be a whole number');
-            // toast.error("Budget must be a whole number!", {
-            //     className: "dark:!bg-red-600 dark:!text-white"
-            // })
-            // return;
         }
 
         if (Number(creditsPerFan) < 100) {
@@ -78,10 +79,6 @@ const Poll = ({ user, eligible, balance }: Props) => {
 
         if (!Number.isInteger(creditsPerFan)) {
             errors.push('Credits per vote must be a whole number');
-            // toast.error("Credits per fan must be a whole number!", {
-            //     className: "dark:!bg-red-600 dark:!text-white"
-            // })
-            return;
         }
         
         const maxAllowedPerFan = Number(budget) / 100;
@@ -169,13 +166,101 @@ const Poll = ({ user, eligible, balance }: Props) => {
         setOptions(updatedInputs);
     };
 
+    const handleAddDescription = () => {
+        setAddDescription(prev => !prev)
+        return;
+    }
+
+    const extractYouTubeVideoId = (url: string): string | null => {
+        const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+    
+        if (match && match[1]) {
+            console.log(match[1]);
+            
+          return match[1];
+        }
+    
+        return null;
+    };
+
     const handleIncludeImage = () => {
         setIncludeImage(prev => !prev)
         return;
     }
 
-    const handleSubmit = async(e: FormEvent) => {
-        e.preventDefault()
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        console.log(file);
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        
+        if (!file) return;
+    
+        // Validate file type and size
+        if (!file.type.startsWith('image/')) {
+            toast.error('Please select an image file!', {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+          return;
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+            toast.error('Only JPG, JPEG, and PNG images are allowed!', {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return;
+        }
+    
+        if (file.size > MAX_SIZE_BYTES) {
+            toast.error(`File size exceeds ${MAX_SIZE_MB}MB limit`, {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+          return;
+        }
+    
+        // Create preview
+        setMediaFile(file)
+        // setPreview(URL.createObjectURL(file));
+    };
+
+    const handleFileUpload = async() => {
+        if (!mediaFile) {
+            toast.error('No photo selected!', {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+          return;
+        };
+
+        const formData = new FormData();
+        formData.append('file', mediaFile as File);
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_ROOTURL}/api/upload`, { method: 'POST', body: formData})
+
+            const result = await response.json();
+            if (result.success) {
+                return result.url;
+            } else {
+                toast.error('Error uploading photo!', {
+                    className: "dark:!bg-red-600 dark:!text-white"
+                })
+                throw new Error("Error uploading photo")
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Error uploading photo!', {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return;
+        }
+    }
+
+    const handleSubmit = async() => {
+        // e.preventDefault()
+
+        let file_url: string | null = null;
+        const extractedVideoId = extractYouTubeVideoId(youtube);
+        let youtube_url: string | null = null;
 
         if (question.trim() == "") {
             toast.error("Write a poll question!", {
@@ -205,7 +290,36 @@ const Poll = ({ user, eligible, balance }: Props) => {
             return;
         }
 
-        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult, eligible: eligible, reward: tasks[3].reward, budget: (sponsored ? budget : 0), credit_per_vote: (sponsored ? creditsPerFan : 0) })
+        if (visual && mediaType == "youtube" && !youtube) {
+            toast.error("Add youtube video link!", {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return;
+        }
+
+        if (visual && mediaType == "youtube" && !extractedVideoId) {
+            toast.error("Invalid youtube video!", {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return
+        }
+
+        if (visual && mediaType == "youtube" && extractedVideoId) {
+            youtube_url = `https://www.youtube.com/embed/${extractedVideoId}` as string;
+        }
+
+        if (visual && mediaType == "photo" && !mediaFile) {
+            toast.error("Select a photo for your poll!", {
+                className: "dark:!bg-red-600 dark:!text-white"
+            })
+            return;
+        }
+
+        if (visual && mediaType=="photo" && mediaFile) {
+            file_url = await handleFileUpload();
+        }
+        
+        const result = await addPoll({ question, description, duration: Number(duration), options, privacy, permission, show_result: liveResult, eligible: eligible, reward: tasks[3].reward, budget: (sponsored ? budget : 0), credit_per_vote: (sponsored ? creditsPerFan : 0), media: (visual ? mediaType : null), media_url: (visual ? mediaType == "photo" ? file_url : youtube_url : null) })
         if (result?.error) {
             alert(result?.error)
             return;
@@ -218,21 +332,25 @@ const Poll = ({ user, eligible, balance }: Props) => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="w-full lg:w-[700px] space-y-7 bg-muted dark:bg-background border px-2 lg:px-10 py-20 rounded-lg">
+        <form action={async () => await handleSubmit()}  className="w-full lg:w-[700px] space-y-7 bg-muted dark:bg-background border px-2 lg:px-10 pt-16 pb-20 rounded-lg">
             <div id="title">
                 <div className='flex items-center justify-between mb-1'>
                     <label htmlFor="question" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Question</label>
                     <p className='text-[10px] mr-2 text-foreground/80'>{titleCounter}</p>
                 </div>
                 <input type="text" name="question" id="question" placeholder='Ask a question' className='px-2 lg:py-[10px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={question} onChange={(e) => handleQuestion(e.target.value)} />
+                <div className="flex items-center space-x-2 mt-2 ml-1">
+                    <input type="checkbox" name="add_description" id="add_description" checked={addDescription} className='border-2' onChange={handleAddDescription} />
+                    <label htmlFor="add_description" className='block text-xs text-gray-500 dark:text-gray-300'>Add description</label>
+                </div>
             </div>
-            <div id="description">
+            {addDescription ? <div id="description">
                 <div className='flex items-center justify-between mb-1'>
                     <label htmlFor="description" className='block text-xs text-gray-500 dark:text-gray-300 mb-1 ml-1'>Description(optional)</label>
                     <p className='text-[10px] mr-2 text-foreground/80'>{descCounter}</p>
                 </div>
                 <textarea name="description" id="description" placeholder='Short note on the question' className='px-2 lg:py-[10px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={description} onChange={(e) => handleDescription(e.target.value)} rows={3}></textarea>
-            </div>
+            </div> : null}
             <div id="options">
                 <div className="w-full flex justify-between items-center mb-1 ml-1">
                     <label htmlFor="" className='block text-xs text-gray-500 dark:text-gray-300'>Answer Options</label>
@@ -272,10 +390,6 @@ const Poll = ({ user, eligible, balance }: Props) => {
                 </button> : null}
             </div>
             {/* <div id="duration" className={user ? "hidden" : ""}> */}
-            <div id="duration">
-                <label htmlFor="duration" className='block text-xs text-gray-500 dark:text-gray-300 mb-1 ml-1'>Poll duration(In days)</label>
-                <input type="text" name="duration" id="duration" placeholder='Add duration in days' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={duration} onChange={(e) => handleDuration(e.target.value)} />
-            </div>
             <div className='w-full flex items-center justify-center'>
                 <div className=''>
                     <button type='button' className='flex items-center space-x-1' onClick={() => setAdvanced(prev => !prev)}>
@@ -289,7 +403,11 @@ const Poll = ({ user, eligible, balance }: Props) => {
                 </div>
             </div>
             <div id="settings" className={`${advanced ? "" : "hidden"}`}>
-                <div className="mb-5">
+                <div id="duration">
+                    <label htmlFor="duration" className='block text-xs text-gray-500 dark:text-gray-300 mb-1 ml-1'>Poll duration(In days)</label>
+                    <input type="text" name="duration" id="duration" placeholder='Add duration in days' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={duration} onChange={(e) => handleDuration(e.target.value)} />
+                </div>
+                <div className="my-5">
                     <div className='mb-1 flex items-center space-x-1'>
                         <label htmlFor="permission" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Permitted voters</label>
                         <TooltipProvider>
@@ -335,6 +453,34 @@ const Poll = ({ user, eligible, balance }: Props) => {
                         <option value="before">Before voting</option>
                         <option value="after">After voting</option>
                     </select>
+                </div>
+                <div className={`mb-5 bg-gray-200 dark:bg-muted rounded-lg visual ${user ? "" : "hidden"}`}>
+                    <div className="w-full flex justify-between items-center mb-2 px-3 py-5">
+                        <label htmlFor="visual">Add photo/video</label>
+                        <Switch id="visual" checked={visual} onCheckedChange={setVisual}  />
+                    </div>
+                    <div className={`${visual ? "px-3 pb-8 space-y-5" : "hidden"}`}>
+                        <div>
+                            <div className='mb-1 flex items-center space-x-1'>
+                                <label htmlFor="mediatype" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Media type</label>
+                            </div>
+                            <select name="mediatype" id="mediatype" value={mediaType} className='px-2 lg:py-[10px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' onChange={(e) => setMediaType(e.target.value)}>
+                                <option value="photo">Photo</option>
+                                <option value="youtube">Youtube Video</option>
+                            </select>
+                        </div>
+                        <div>
+                            {mediaType == "youtube" &&  <div>
+                                <div className='mb-1 flex items-center space-x-1'>
+                                    <label htmlFor="youtube" className='block text-xs text-gray-500 dark:text-gray-300 ml-1'>Youtube video link</label>
+                                </div>
+                                <input type="text" name="youtube" id="youtube" placeholder='e.g: https://youtube.com/embed/12345' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' value={youtube} onChange={(e) => setYoutube(e.target.value)} />
+                            </div>}
+                            {mediaType == "photo" && <div>
+                                <input type="file" name="mediafile" id="mediafile" placeholder='select photo' className='px-2 lg:py-[8px] py-3 border-[1px] rounded-md border-gray-500 text-sm w-full bg-transparent' accept='.jpg, .jpeg, .png, .gif' onChange={(e) => handleFileSelect(e)} />
+                            </div>}
+                        </div>
+                    </div>
                 </div>
                 <div className="w-full flex justify-between items-center mb-5 px-3 bg-gray-200 dark:bg-muted py-5 rounded-lg privacy">
                     <div className='flex items-center space-x-1'>

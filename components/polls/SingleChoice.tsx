@@ -9,6 +9,8 @@ import { useExploreVote, useVote } from '@/hooks/vote'
 import { milestones } from '@/lib/data/clientMockData'
 import { ShineBorder } from '../magicui/shine-border'
 import Link from 'next/link'
+// import { CldImage } from 'next-cloudinary';
+import Image from 'next/image'
 
 type Props = {
     data: {
@@ -21,6 +23,8 @@ type Props = {
         private: string,
         show_result: string,
         budget: number,
+        media: string | null,
+        media_url: string | null,
         credit_per_vote: number,
         created_at: string,
         creator?: TOwner | null,
@@ -123,7 +127,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
         if (bulk) {
             exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token, sponsored });
             if (user && sponsored > 0) {
-                toast.success(`You just earned ${sponsored} credit!`, {
+                toast.info(`You just earned ${sponsored} credit!`, {
                     className: "dark:!bg-green-600 dark:!text-white"
                 })
             }
@@ -131,7 +135,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token, sponsored })
             if (sponsored > 0) {
                 if (user) {
-                    toast.success(`You just earned ${sponsored} credit!`, {
+                    toast.info(`🔶 You just earned ${sponsored} credit!`, {
                         className: "dark:!bg-green-600 dark:!text-white"
                     })
                 }
@@ -161,14 +165,33 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             </div> : null} */}
             <Link href={`${process.env.NEXT_PUBLIC_ROOTURL}/poll/${data.id}`} className='font-semibold text-2xl lg:text-4xl !leading-snug'>{data.question}</Link>
             {data.description ? <p className='text-sm lg:text-base mt-3 lg:mt-3 !leading-snug ml-2 text-foreground/60'>{data.description}</p> : null}
+            {data.media ? 
+                data.media == "photo" ? <div className="w-full mt-5">
+                <Image
+                  src={data.media_url as string}
+                  width={500}
+                  height={400}
+                  className="w-full h-auto bg-muted rounded-lg"
+                  alt="poll_image"
+                />
+              </div> : 
+              data.media == "youtube" ? <div className="w-full aspect-video bg-muted mt-5"><iframe
+                    className="w-full h-full"
+                    height={240}
+                    src={data.media_url as string}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe></div> : null
+                 : null}
             <RadioGroup className='space-y-5 mt-10 lg:mt-14' value={choice as string} onValueChange={setChoice}>
-                {data.options ? data.options.length > 0 ? data.options.map((option, index) => <label htmlFor={option.text} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={index}>
+                {data.options ? data.options.length > 0 ? data.options.map((option) => <label htmlFor={option.id} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={option.id}>
                     <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
                         {option.image ? <img src={option.image} alt={option.text} className='w-7 lg:w-10 h-7 lg:h-10 object-cover rounded-full' /> : null}
                     </div>
                     <div className='w-full space-y-1'>
                         <div className={`flex items-center ${!option.image ? 'mb-2' : null}`}>
-                            <RadioGroupItem id={option.text} value={option.id} className={`w-5 h-5 ${option.user_voted ? "text-green-600 border-green-600" : "text-primary border-primary"} mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
+                            <RadioGroupItem id={option.id} value={option.id} className={`w-5 h-5 ${option.user_voted ? "text-green-600 border-green-600" : "text-primary border-primary"} mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />
                             <p className='text-sm'>{option.text}</p>
                         </div>
                         <div className={`w-[100%] h-5 lg:h-6 bg-border dark:bg-[#404040] rounded-xl overflow-hidden ${!showResult ? "hidden" : null} relative`}>

@@ -33,7 +33,7 @@ const generateUsername = (email: string) => {
     return `${baseUsername}${randomSuffix}`;
 };
 
-export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number }) {
+export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote, media, media_url }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number, media: string | null, media_url: string | null }) {
     let id: string | undefined;
 
     // Calculate expires_at by adding duration (in days) to the current timestamp
@@ -47,7 +47,7 @@ export async function addPoll({ question, description, duration, options, permis
         const { data: pollData, error: pollError } = await supabase
             .from('polls')
             .insert([
-                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote }
+                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote, media, media_url }
             ])
             .select()
 

@@ -65,7 +65,7 @@ const ChangePasswordForm = () => {
         <form action={async () => await handleSubmit()} className='col-span-12 lg:col-span-6 py-12 lg:py-16 px-4 lg:px-16 space-y-6' >
             <div className='space-y-2'>
                 <h3 className="lg:font-bold text-xl">Change Password</h3>
-                <p className='text-sm text-slate-400'>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+                <p className='text-sm text-slate-400'>By keeping your password private, you help us protect your account.</p>
             </div>
             <div>
                 <div className='mb-[5px] flex w-full justify-between items-center px-1'>
