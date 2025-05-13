@@ -84,7 +84,7 @@ const EditProfileForm = ({ name, gend, dob }: { name: string, gend: string, dob:
             console.log(err);  
         }
 
-        toast.success("Profile changed successfully!", {
+        toast.success(first_time ? `You just earned extra ${tasks[1].reward.toLocaleString()} credits!` : "Profile updated successfully!", {
             className: "dark:!bg-green-600 dark:!text-white"
         })
         return;

@@ -29,6 +29,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             media,
             media_url,
             credit_per_vote,
+            action,
+            action_goal,
+            action_title,
+            action_description,
+            waitlist_purpose,
+            checkout,
             created_at,
             creator:users!creator (
                 id,
@@ -43,6 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                 id,
                 image,
                 text,
+                trigger,
                 votes:votes!option (
                     id,
                     voter,

@@ -26,6 +26,12 @@ type Props = {
         media: string | null,
         media_url: string | null,
         credit_per_vote: number,
+        action: boolean,
+        action_goal: string | null,
+        action_title: string | null,
+        action_description: string | null,
+        waitlist_purpose: string | null,
+        checkout: { platform: string, url: string } | null,
         created_at: string,
         creator?: TOwner | null,
         options: Array<TOptions>,
@@ -35,9 +41,13 @@ type Props = {
         expired?: boolean,
         user_has_voted: boolean,
         selected_option_id: string | null
-      },
-      bulk: boolean,
-      user: string,
+    },
+    bulk: boolean;
+    user: string;
+    validUser: boolean;
+    openForm: () => void;
+    openWaitList: (poll_id: string, title?: string, description?: string) => void;
+    openPreSale: (url: string, title?: string, description?: string) => void;
 }
 
 type TOwner = {
@@ -53,6 +63,7 @@ type TOwner = {
 type TOptions = {
     id: string,
     text: string,
+    trigger: boolean,
     image?: string | null,
     votes: Array<string | null>,
     total_votes: number,
@@ -63,8 +74,7 @@ type TOptions = {
 
 // const showResult = true;
 
-const SingleChoice = ({ data, bulk, user }: Props) => {
-
+const SingleChoice = ({ data, bulk, user, validUser, openForm, openWaitList, openPreSale }: Props) => {
     const [ choice, setChoice ] = useState<string | null>(data.selected_option_id || null);
     const { mutate: pollVote } = useVote(data.id);
     const { mutate: exploreVote } = useExploreVote();
@@ -72,18 +82,23 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
     const mileStones = [ 99, 199, 499, 999, 1999, 4999, 9999, 99999 ]
 
     const handleVote = async() => {
-
         let isReady: boolean = false;
         let award: string | null = null;
         let achieved: boolean = false;
         let token: number = 0;
         let sponsored: number = 0;
+        const triggerValue = data.options.find((option: TOptions) => option.id === choice?.trim())?.trigger;
 
         if (choice?.trim() == null) {
             toast.error("No option was selected!", {
                 className: "dark:!bg-red-600 dark:!text-white"
             })
             return;
+        }
+
+        if (validUser == false) {
+            openForm()
+            return
         }
 
         if (data.user_has_voted) {
@@ -126,11 +141,27 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
 
         if (bulk) {
             exploreVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: achieved ? 0 : token, sponsored });
+
             if (user && sponsored > 0) {
                 toast.info(`You just earned ${sponsored} credit!`, {
                     className: "dark:!bg-green-600 dark:!text-white"
                 })
             }
+
+            if (triggerValue && data.action && data.action_goal == "wait-list") {
+                setTimeout(() => {
+                    openWaitList(data.id, data.action_title as string, data.action_description as string)
+                }, 1000);
+                return;
+            }
+    
+            if (triggerValue && data.action && data.action_goal == "pre-orders") {
+                setTimeout(() => {
+                    openPreSale(data.checkout?.url as string, data.action_title as string, data.action_description as string)
+                }, 1000);
+                return;
+            }
+
         } else {
             pollVote({ pollId: data.id, optionId: choice, eligible: achieved ? null : award, creator: data.creator?.id ? data.creator.id : null, reward: token, sponsored })
             if (sponsored > 0) {
@@ -139,10 +170,40 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
                         className: "dark:!bg-green-600 dark:!text-white"
                     })
                 }
+
+                if (triggerValue && data.action && data.action_goal == "wait-list") {
+                    setTimeout(() => {
+                        openWaitList(data.id, data.action_title as string, data.action_description as string)
+                    }, 1000);
+                    return;
+                }
+        
+                if (triggerValue && data.action && data.action_goal == "pre-orders") {
+                    setTimeout(() => {
+                        openPreSale(data.checkout?.url as string, data.action_title as string, data.action_description as string)
+                    }, 1000);
+                    return;
+                }
+
             } else {
+                if (triggerValue && data.action && data.action_goal == "wait-list") {
+                    setTimeout(() => {
+                        openWaitList(data.id, data.action_title as string, data.action_description as string)
+                    }, 1000);
+                    return;
+                }
+        
+                if (triggerValue && data.action && data.action_goal == "pre-orders") {
+                    setTimeout(() => {
+                        openPreSale(data.checkout?.url as string, data.action_title as string, data.action_description as string)
+                    }, 1000);
+                    return;
+                }
+
                 toast.success("You have voted successfully!", {
                     className: "dark:!bg-green-600 dark:!text-white"
                 })
+
             }
         }
     }
@@ -151,7 +212,7 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
         <div className="relative border dark:border dark:border-foreground/30 bg-[#f3f3f3] dark:bg-[#0c0c0c] rounded-md py-10 lg:py-16 px-2 lg:px-5">
             {data.budget > 0 ? <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> : null}
             <div className='flex w-full justify-end mb-5'>
-                <button type='button' className='w-10 h-10 flex justify-center items-center bg-border dark:bg-[#404040] rounded-full'>
+                <button type='button' className='w-10 h-10 flex justify-center items-center bg-border dark:bg-[#404040] rounded-full' onClick={() => {}}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
                         <path fillRule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clipRule="evenodd" />
                     </svg>
@@ -168,14 +229,14 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
             {data.media ? 
                 data.media == "photo" ? <div className="w-full mt-5">
                 <Image
-                  src={data.media_url as string}
-                  width={500}
-                  height={400}
-                  className="w-full h-auto bg-muted rounded-lg"
-                  alt="poll_image"
+                src={data.media_url as string}
+                width={500}
+                height={400}
+                className="w-full h-auto bg-muted rounded-lg"
+                alt="poll_image"
                 />
-              </div> : 
-              data.media == "youtube" ? <div className="w-full aspect-video bg-muted mt-5"><iframe
+            </div> : 
+            data.media == "youtube" ? <div className="w-full aspect-video bg-muted mt-5"><iframe
                     className="w-full h-full"
                     height={240}
                     src={data.media_url as string}
@@ -183,12 +244,12 @@ const SingleChoice = ({ data, bulk, user }: Props) => {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                 ></iframe></div> : null
-                 : null}
+                : null}
             <RadioGroup className='space-y-5 mt-10 lg:mt-14' value={choice as string} onValueChange={setChoice}>
                 {data.options ? data.options.length > 0 ? data.options.map((option) => <label htmlFor={option.id} className='w-full flex items-center space-x-2 lg:space-x-3 cursor-pointer' key={option.id}>
-                    <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
+                    {/* <div className={`min-w-9 lg:min-w-12 h-9 lg:h-12 border-2 border-primary rounded-full ${option.image ? 'flex items-center justify-center' : 'hidden'}`}>
                         {option.image ? <img src={option.image} alt={option.text} className='w-7 lg:w-10 h-7 lg:h-10 object-cover rounded-full' /> : null}
-                    </div>
+                    </div> */}
                     <div className='w-full space-y-1'>
                         <div className={`flex items-center ${!option.image ? 'mb-2' : null}`}>
                             <RadioGroupItem id={option.id} value={option.id} className={`w-5 h-5 ${option.user_voted ? "text-green-600 border-green-600" : "text-primary border-primary"} mr-2 ${option.image ? "hidden" : null}`} disabled={data.user_has_voted}  />

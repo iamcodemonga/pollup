@@ -1,7 +1,7 @@
 import SinglePollFetcher from '@/components/fetcher/single'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
-import { getPollById } from '@/lib/queries/server'
+import { getPollById, getUserById } from '@/lib/queries/server'
 import { createClient } from '@/utils/supabase/server'
 import { Metadata } from 'next'
 // import { redirect } from 'next/navigation'
@@ -63,12 +63,15 @@ const page = async({ params } : Pageprops) => {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    const userStatus: { achievement: string[] } = await getUserById(user?.id as string, ["achievement"]) as unknown as { achievement: string[] }
+    const validUser = userStatus?.achievement.includes("profile");
+
     return (
         <div className="px-3 lg:px-20 bggg">
             <Navbar user={user?.id as string} />
             <section className='w-full lg:flex justify-center mt-28 lg:mt-40'>
                 <div className='lg:w-[700px] space-y-10'>
-                    <SinglePollFetcher id={id} user={user?.id as string} />
+                    <SinglePollFetcher id={id} user={user?.id as string} userEmail={user?.email as string} validUser={validUser} />
                 </div>
             </section>
             <Footer />

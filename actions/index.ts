@@ -1,6 +1,6 @@
 "use server"
 
-import { findExistingUserById, referralReward, taskCompletionReward } from "@/lib/queries/server";
+import { emailExistsInWaitList, findExistingUserById, referralReward, taskCompletionReward } from "@/lib/queries/server";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 // import { revalidatePath } from "next/cache";
@@ -33,11 +33,9 @@ const generateUsername = (email: string) => {
     return `${baseUsername}${randomSuffix}`;
 };
 
-export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote, media, media_url }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number, media: string | null, media_url: string | null }) {
+export async function addPoll({ question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote, media, media_url, action, action_title, action_description, action_goal, waitlist_purpose, checkout }: { question: string, description: string, duration: number, options: Array<{ image: null, text: string, trigger: boolean }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number, media: string | null, media_url: string | null, action: boolean, action_goal: string | null, action_title: string | null, action_description: string | null, waitlist_purpose: string | null, checkout: { platform: string, url: string } | null }) {
     let id: string | undefined;
 
-    // Calculate expires_at by adding duration (in days) to the current timestamp
-    // const createdAt = new Date().toISOString();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + duration);
     const supabase = await createClient();
@@ -47,7 +45,7 @@ export async function addPoll({ question, description, duration, options, permis
         const { data: pollData, error: pollError } = await supabase
             .from('polls')
             .insert([
-                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote, media, media_url }
+                { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote, media, media_url, action, action_goal, action_title, action_description, waitlist_purpose, checkout }
             ])
             .select()
 
@@ -61,7 +59,7 @@ export async function addPoll({ question, description, duration, options, permis
             const { error: OptionError  } = await supabase
                 .from('options')
                 .insert(options.map((option, index) => {
-                    return { poll: pollData[0].id, image: option.image, text: option.text, position: index+1}
+                    return { poll: pollData[0].id, image: option.image, text: option.text, position: index+1, trigger: option.trigger }
                 }))
 
             if (OptionError) {
@@ -90,7 +88,7 @@ export async function addPoll({ question, description, duration, options, permis
     }
 
     redirect(`/poll/${id}`)
-    // revalidatePath("/explore");
+    // revalidatePath("/create");
 }
 
 // Sign Up Action
@@ -220,7 +218,7 @@ export async function exitApp() {
     // redirect('/signup');
 }
 
-export async function updateUser({ fullname, birthday, gender, eligible, reward }: { fullname: string, birthday: string, gender: string, eligible: boolean, reward: number }) {
+export async function updateUser({ fullname, birthday, gender, eligible, reward }: { fullname?: string, birthday: string, gender: string, eligible: boolean, reward: number }) {
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -297,4 +295,31 @@ export async function updatePassword({ oldPassword, newPassword }: { oldPassword
   
     // Redirect to the home page or dashboard
     revalidatePath('/dashboard/settings');
+}
+
+export async function engageWaitList({ poll_id, email }: { poll_id: string, email: string }) {
+
+    const supabase = await createClient();
+    // const { data: { user } } = await supabase.auth.getUser();
+
+    const exist = await emailExistsInWaitList(poll_id, email);
+    
+    if (!exist) {
+        try {
+            const { error } = await supabase
+                .from('waitlist')
+                .insert([{ poll_id, email }])
+                
+            if (error) {
+                throw new Error('Network Error!!! Could not add email to waitlist!');
+            }
+        } catch (error) {
+            return {
+                error: getErrorMessage(error)
+            }
+        }
+    }
+  
+    // Redirect to the home page or dashboard
+    // revalidatePath('/dashboard/settings');
 }

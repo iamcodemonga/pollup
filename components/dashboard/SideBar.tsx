@@ -124,7 +124,7 @@ const SideBar = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
                         </svg>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className=''>
+                    <AlertDialogContent className='max-w-80 sm:max-w-[425px] rounded-lg'>
                         <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>This action will log you out of Reapoll in this device. your session will still be active on other devices.</AlertDialogDescription>

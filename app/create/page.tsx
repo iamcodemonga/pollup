@@ -36,10 +36,10 @@ const page = async() => {
         <div className="px-1 lg:px-20">
             <Navbar user={user?.id as string} />
             <section className="py-20 mt-20 lg:mt-28">
-                <h1 className="text-center text-5xl">Create a Poll</h1>
+                <h1 className="text-center text-3xl lg:text-5xl">Create Smart Poll</h1>
                 <div className="w-full flex justify-center">
-                    <div className="w-full my-4">
-                        <p className="text-center text-foreground/80">Get valuable insights on anything from people around the world.</p>
+                    <div className="w-full lg:w-1/2 mb-4 mt-7 px-2">
+                        <p className="text-center text-foreground/80">Get valuable and actionable insights for your product, content or ideas from people around the world.</p>
                     </div>
                 </div>
                 <div className="w-full flex justify-center mt-5">

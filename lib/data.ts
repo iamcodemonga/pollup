@@ -1,51 +1,14 @@
-export const timeline = [
+export const salePitch = [
     {
-        id: "1",
-        owner: { id: "1", name: "Google INC.", verified: true },
-        type: "single",
-        image: false,
-        sponsored: false,
-        showResult: "after",
-        title: "Who will win the United states presidential election in 2024?",
-        options: [
-            { text: "Joe Biden", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 6500 },
-            { text: "Donald Trump", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 35000 },
-            { text: "Kamala Harris", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 8000 },
-            { text: "Peter Obi", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 855 },
-        ],
-        votes: 50355
-    },
-    {
-        id: "2",
-        owner: { id: "1", name: "Google INC.", verified: true },
-        type: "single",
-        image: true,
-        sponsored: true,
-        showResult: "before",
-        title: "Who will win the United states presidential election in 2024?",
-        options: [
-            { text: "Joe Biden", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 6500 },
-            { text: "Donald Trump", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 35000 },
-            { text: "Kamala Harris", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 8000 },
-            { text: "Peter Obi", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 855 },
-        ],
-        votes: 50355
-    },
-    {
-        id: "3",
-        owner: { id: "1", name: "Google INC.", verified: true },
-        type: "single",
-        image: false,
-        sponsored: false,
-        showResult: "before",
-        title: "Who will win the United states presidential election in 2024?",
-        options: [
-            { text: "Joe Biden", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 6500 },
-            { text: "Donald Trump", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 35000 },
-            { text: "Kamala Harris", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 8000 },
-            { text: "Peter Obi", image: "https://images.pexels.com/photos/909907/pexels-photo-909907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", votes: 855 },
-        ],
-        votes: 50355
+        heading: "The Smarter Way to Test Ideas: Get Feedback, Emails & Pre-Orders—Without Building a Thing",
+        subheading: "",
+        target: "",
+        CTA: [
+            {
+                text: "",
+                url: ""
+            }
+        ]
     }
 ]
 
@@ -54,7 +17,7 @@ export const JoinReason = [
         icon: "💪",
         voter: true,
         title: "Completely free",
-        description: "Whether you're voting, creating polls, or analyzing data, it’s 100% free to use.",
+        description: "Whether you're gathering feedbacks or analyzing data, it’s 100% free to use.",
     },
     {
         icon: "📊",
@@ -66,7 +29,7 @@ export const JoinReason = [
         icon: "🌎",
         voter: true,
         title: "Active community",
-        description: "Join thousands of users voting on sports, politics, entertainment, and more.",
+        description: "We have a large community of voters who are willing to give feedback and show commitment towards your business.",
     },
     {
         icon: "🏆",
@@ -77,14 +40,14 @@ export const JoinReason = [
     {
         icon: "🔥",
         voter: true,
-        title: "Trending topics",
-        description: "Stay updated with what’s buzzing in news, culture, technology and the latest conversations.",
+        title: "Pre-Orders & Email Capture",
+        description: "Don't just get feedback, get email sign-ups and pre-orders for your product.",
     },
     {
         icon: "💰",
         voter: true,
-        title: "Instant rewards for voting",
-        description: "Reap instant rewards by voting on fun and trendy topics including business and politics",
+        title: "Reward System",
+        description: "Boost participation by sponsoring polls with credits that you can get when you signup",
     }
 ]
 

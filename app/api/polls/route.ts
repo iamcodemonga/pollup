@@ -1,7 +1,24 @@
+import { taskCompletionReward } from "@/lib/queries/server";
 import { createClient } from "@/utils/supabase/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"
+
+const getErrorMessage = (error: unknown): string => {
+  let message: string;
+
+  if (error instanceof Error) {
+      message = error.message;
+  } else if (error && typeof error === "object" && "message" in error) {
+      message = String(error.message)
+  } else if (typeof error === "string") {
+      message = error;
+  } else {
+      message = "something went wrong";
+  }
+
+  return message;
+}
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -31,6 +48,12 @@ export async function GET(request: NextRequest) {
             media,
             media_url,
             credit_per_vote,
+            action,
+            action_goal,
+            action_title,
+            action_description,
+            waitlist_purpose,
+            checkout,
             creator:users!creator (
               id,
               dp,
@@ -44,6 +67,7 @@ export async function GET(request: NextRequest) {
               id,
               image,
               text,
+              trigger,
               created_at,
               votes:votes!option (
                 id,
@@ -112,4 +136,62 @@ export async function GET(request: NextRequest) {
     );
   
   return NextResponse.json(transformedPolls);
+}
+
+export async function POST(request: NextRequest) {
+  let id: string | undefined;
+  const { question, description, duration, options, permission, show_result, privacy, eligible, reward, budget, credit_per_vote, media, media_url, action, action_title, action_description, action_goal, waitlist_purpose, checkout }:{ question: string, description: string, duration: number, options: Array<{ image: null, text: string, trigger: boolean }>, permission: string, show_result: string, privacy: boolean, eligible: boolean, reward: number, budget: number, credit_per_vote: number, media: string | null, media_url: string | null, action: boolean, action_goal: string | null, action_title: string | null, action_description: string | null, waitlist_purpose: string | null, checkout: { platform: string, url: string } | null } = await request.json();
+  
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + duration);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  try {
+      const { data: pollData, error: pollError } = await supabase
+          .from('polls')
+          .insert([
+              { question, description, private: privacy, duration, permission, show_result, expires_at: expiresAt, creator: (user ? user.id : null), budget, credit_per_vote, media, media_url, action, action_goal, action_title, action_description, waitlist_purpose, checkout }
+          ])
+          .select()
+
+      if (pollError) {
+          console.log(pollError);
+          throw new Error("Network error!");
+      }
+
+      id = pollData[0].id;
+      if(pollData[0].id){
+          const { error: OptionError  } = await supabase
+              .from('options')
+              .insert(options.map((option, index) => {
+                  return { poll: pollData[0].id, image: option.image, text: option.text, position: index+1, trigger: option.trigger }
+              }))
+
+          if (OptionError) {
+              console.log(OptionError);
+              throw new Error("Network error!");
+          }
+      }
+
+      if (user?.id && budget > 0 && credit_per_vote > 0) {
+          const { data: newBalance, error: rpcError } = await supabase.rpc('balance_decrement', { amount: budget, user_id: user.id });
+      
+          if (rpcError) {
+              throw new Error(rpcError.message);
+          }
+          console.log(newBalance);
+      }
+
+      if (user?.id && eligible) {
+          await taskCompletionReward(user.id, "poll", reward)
+      }
+
+      return NextResponse.json({ status: "success", id, message: "Poll created successfully!" })
+      
+  } catch (error) {
+    const message = getErrorMessage(error)
+    return NextResponse.json({ status: "failed", id, message })
+  }
 }

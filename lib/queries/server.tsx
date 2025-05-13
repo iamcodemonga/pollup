@@ -322,5 +322,28 @@ export const getIPInfo = async(countryCode: string, city: string, region: string
     return { continent: continentName, country: countryName, country_code: countryCode, region, city }
 }
 
+// findExistingUserByEmail - email * expecting boolean
+export const emailExistsInWaitList = async(poll_id: string, email: string) => {
+    const supabase = await createClient();
+    try {
+        const { data, error } = await supabase
+        .from('waitlist')
+        .select(`id, email`)
+        .eq('poll_id', poll_id)
+        .eq('email', email)
+        .single();
+
+        console.log(data);
+
+        if (error) {
+            throw new Error(error.message)
+        }
+        return !!data;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // getUserPolls - userId
 // getUserVotedPolls - userId
